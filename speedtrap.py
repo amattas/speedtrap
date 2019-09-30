@@ -4,12 +4,18 @@ import time
 import threading
 from videorecorder import VideoRecorder
 
-speeding = True
-
-
 def main():
     logger.info("SpeedTrap Starting")
-    video_recorder = VideoRecorder()
+    logger.info("Loading configuration file")
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    if logger.getEffectiveLevel() == logging.DEBUG:
+        for s in config.sections():
+            logger.debug('Loaded configuration section %s', s)
+            for k in config[s]:
+                logger.debug('Loaded configration key %s', k)
+    logger.info("Configuration file loaded")
+    video_recorder = VideoRecorder(config)
     video_recorder.set_speed(25)
     video_recorder.start_recording()
     time.sleep(5)
