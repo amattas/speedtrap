@@ -1,0 +1,32 @@
+#
+#
+#
+[DEFAULT]
+
+
+[DATABASE]
+#Right now the only option that works here is AzureSQLDB
+DatabaseType=AzureSQLDB
+DatabaseHost=<hostname>
+DatabaseUser=<username>
+DatabasePassword=<password>
+
+
+[IMAGES]
+#The only option right now is AzureBlobStorage
+ImageStoreType=AzureBlobStorage
+ImageStoreHost=<hostname>
+ImageStoreContainer=<containername>
+ImageStoreKey=<keyname>
+
+[CAMERA]
+XResolution=640
+YResolution=480
+FrameRate=20
+#Video codec must be available on system, list of codecs at https://www.fourcc.org/codecs.php
+FourCCVideoCodec=MJPG
+#File extension must be compatible with video codec
+FileExtension=.avi
+
+
+[RADAR]

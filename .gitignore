@@ -10,4 +10,6 @@ pyvenv.cfg
 pip-selfcheck.json
 __pycache__/*
 .DS_Store
+.idea
 *.avi
+config.ini
