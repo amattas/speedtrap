@@ -48,6 +48,7 @@ class VideoRecorder:
         while self._recording:
             ret, frame = video_capture.read()
             self._video_overlay(frame)
+            self.logger.debug('Shape of source frame is %s', frame.shape)
             video_writer.write(frame)
         video_capture.release()
         video_writer.release()
