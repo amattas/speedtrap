@@ -41,8 +41,8 @@ class VideoRecorder:
     def _video_recorder(self):
         self.logger.debug("Entering video_recorder()")
         video_capture = cv2.VideoCapture(0)
-        video_capture.set(3, 1024)
-        video_capture.set(4, 768)
+        video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
+        video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 768)
         video_codec = cv2.VideoWriter_fourcc(*'MJPG')
         video_writer = cv2.VideoWriter("cam_video.avi", video_codec, 20.0, (1024, 768))
         while self._recording:
