@@ -2,7 +2,7 @@
 #
 #
 [DEFAULT]
-
+SpeedThreshold=0
 
 [DATABASE]
 #Right now the only option that works here is AzureSQLDB
