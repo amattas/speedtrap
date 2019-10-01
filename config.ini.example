@@ -1,28 +1,32 @@
 [DEFAULT]
-LogThreshold=0
-RecordThreshold=0
+LogThreshold=20
+RecordThreshold=25
+ClearLocalOnStart=1
+#Enables cloud storage and cloud database
+EnableAzure=1
+LogLevel=INFO
 
 [DATABASE]
-# Right now the only option that works here is AzureSQLDB
-DatabaseType=AzureSQLDB
-DatabaseHost=<hostname>
-DatabaseUser=<username>
-DatabasePassword=<password>
+# Right now the only option that works here is AzureSQLDB or LocalOnly
+EnableLocalDatabase=1
+DatabasePath=./
+DatabaseFilename=log.csv
 
+EnableODBC=1
+DatabaseConnectionString=DRIVER={FreeTDS};SERVER=<servername>t;PORT=1433;DATABASE=<databasename>;UID=<username>;PWD=<password>;TDS_Version=7.3;
+DatabaseDriver={FreeTDS}
 
 [STORAGE]
-# ImageStoreType determines the location to store images to. Currently data can be stored in AzureBlobStorage
-# of local
-StorageType=AzureBlobStorage
 StoragePath=./
-
-# Delete from local drive after successful upload to the cloud
-StorageDeleteOnUpload=0
 
 # Configuration for Azure Storage Blobs
 StorageAzureStorageAccountName=<accountname>
-StorageAzureStorageContainer=<containername>
-StorageAzureStorageKey=<accountkey>
+StorageAzureStorageContainer=<container>
+StorageAzureStorageKey=<credential>
+
+# Delete from local drive after successful upload to the cloud
+StorageDeleteOnUpload=1
+
 
 [CAMERA]
 # Resolution must be supported by your camera or execution will fail
@@ -36,3 +40,13 @@ FileExtension=.avi
 
 
 [RADAR]
+DevicePath=/dev/tty.usbmodem143101
+SpeedOutputUnits=US
+DataPrecision=F2
+SamplingRate=S2
+DirectionControl=R|
+SpeedReport=OS
+ProcessingLightActivity=Oc
+LedControl=OL
+BlankDataReporting=BZ
+TransmitPower=P7
