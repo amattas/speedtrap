@@ -1,5 +1,6 @@
 [DEFAULT]
-SpeedThreshold=0
+LogThreshold=0
+RecordThreshold=0
 
 [DATABASE]
 # Right now the only option that works here is AzureSQLDB

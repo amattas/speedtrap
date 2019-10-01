@@ -2,7 +2,8 @@ import configparser
 import logging
 import time
 import threading
-from videorecorder import VideoRecorder
+
+from logspeed import LogSpeed
 
 def main():
     logger.info("SpeedTrap Starting")
@@ -15,11 +16,12 @@ def main():
             for k in config[s]:
                 logger.debug('Loaded configration key %s', k)
     logger.info("Configuration file loaded")
-    video_recorder = VideoRecorder(config)
-    video_recorder.set_speed(25)
-    video_recorder.start_recording()
+    log_speed = LogSpeed(config)
+    log_speed.log_speed(25)
     time.sleep(5)
-    video_recorder.stop_recording()
+    log_speed.log_speed(35)
+    time.sleep(5)
+    log_speed.log_speed(20)
     logger.info("SpeedTrap Terminating")
     while threading.active_count() > 1:
         logger.info('Waiting for %s threads to terminate.', threading.active_count()-1)

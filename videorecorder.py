@@ -6,14 +6,13 @@ import uuid
 import cloudstorage
 
 
-
 class VideoRecorder:
 
-    def __init__(self, config, recording=False, speed=0):
+    def __init__(self, config):
         self.logger = logging.getLogger('SpeedTrap')
         self.logger.debug("Creating VideoRecorder() instance")
-        self._recording = recording
-        self._speed = speed
+        self._recording = False
+        self._speed = 0
         self._config = config
         self._load_config(config)
 
@@ -28,16 +27,18 @@ class VideoRecorder:
         self._storage_type = config['STORAGE']['StorageType']
         self.logger.debug("Leaving _load_config()")
 
-    def start_recording(self):
-        self.logger.debug("Entering start_recording()")
-        self._recording = True
-        if not hasattr(self, '_recording_thread'):
-            self._start_recording_thread()
-        elif not self._recording_thread.is_alive():
-            self._start_recording_thread()
-        else:
-            self.logger.info("Existing recording thread started, using existing")
-        self.logger.debug("Leaving start_recording()")
+    def record_speed(self, speed):
+        self.logger.debug("Entering record_speed()")
+        self.logger.debug("Setting speed to %s", speed)
+        self._speed = speed
+        if not self._recording:
+            self._recording = True
+            if not hasattr(self, '_recording_thread'):
+                self.logger.debug("Thread not found, starting new recording thread")
+                self._start_recording_thread()
+            elif not self._recording_thread.is_alive():
+                self.logger.debug("Thread not alive, starting new recording thread")
+                self._start_recording_thread()
 
     def _start_recording_thread(self):
         self.logger.debug("Entering start_recording_thread()")
@@ -49,9 +50,6 @@ class VideoRecorder:
         self.logger.debug("Entering stop_recording()")
         self._recording = False
         self.logger.debug("Leaving stop_recording()")
-
-    def set_speed(self, speed):
-        self._speed = speed
 
     def _video_recorder(self):
         self.logger.debug("Entering video_recorder()")
@@ -71,6 +69,7 @@ class VideoRecorder:
         if not self._storage_type == 'LocalOnly':
             cs = cloudstorage.CloudStorage(self._config)
             cs.store_cloud_image(video_filename)
+        # Call logging function
         video_capture.release()
         video_writer.release()
         cv2.destroyAllWindows()
