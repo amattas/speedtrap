@@ -3,6 +3,9 @@ import cv2
 import threading
 import time
 import uuid
+import cloudstorage
+
+
 
 class VideoRecorder:
 
@@ -11,11 +14,19 @@ class VideoRecorder:
         self.logger.debug("Creating VideoRecorder() instance")
         self._recording = recording
         self._speed = speed
+        self._config = config
+        self._load_config(config)
+
+    def _load_config(self, config):
+        self.logger.debug("Entering _load_config()")
         self._xresolution = int(config['CAMERA']['XResolution'])
         self._yresolution = int(config['CAMERA']['YResolution'])
         self._frame_rate = int(config['CAMERA']['FrameRate'])
         self._file_extension = config['CAMERA']['FileExtension']
         self._fourcc_video_codec = config['CAMERA']['FourCCVideoCodec']
+        self._storage_path = config['STORAGE']['StoragePath']
+        self._storage_type = config['STORAGE']['StorageType']
+        self.logger.debug("Leaving _load_config()")
 
     def start_recording(self):
         self.logger.debug("Entering start_recording()")
@@ -24,7 +35,6 @@ class VideoRecorder:
             self._start_recording_thread()
         elif not self._recording_thread.is_alive():
             self._start_recording_thread()
-            self.logger.info("Starting recording thread")
         else:
             self.logger.info("Existing recording thread started, using existing")
         self.logger.debug("Leaving start_recording()")
@@ -51,13 +61,16 @@ class VideoRecorder:
         video_codec = cv2.VideoWriter_fourcc(*self._fourcc_video_codec)
         video_filename = str(uuid.uuid4().hex) + self._file_extension
         self.logger.debug("Writing file %s", video_filename)
-        video_writer = cv2.VideoWriter(video_filename, video_codec, self._frame_rate,
+        video_writer = cv2.VideoWriter(self._storage_path+video_filename, video_codec, self._frame_rate,
                                        (self._xresolution, self._yresolution))
         while self._recording:
             ret, frame = video_capture.read()
             self._video_overlay(frame)
             self.logger.debug('Shape of source frame is %s', frame.shape)
             video_writer.write(frame)
+        if not self._storage_type == 'LocalOnly':
+            cs = cloudstorage.CloudStorage(self._config)
+            cs.store_cloud_image(video_filename)
         video_capture.release()
         video_writer.release()
         cv2.destroyAllWindows()
@@ -70,5 +83,6 @@ class VideoRecorder:
         font_scale = .8
         font_thickness = 2
         color = (0, 0, 255)
-        text_size = cv2.getTextSize(overlay_text,font_face, font_scale, font_thickness)
-        cv2.putText(img, overlay_text, (20, self._yresolution-20), font_face, font_scale, color, font_thickness, cv2.LINE_AA)
+        # text_size = cv2.getTextSize(overlay_text,font_face, font_scale, font_thickness)
+        cv2.putText(img, overlay_text, (20, self._yresolution-20), font_face, font_scale, color,
+                    font_thickness, cv2.LINE_AA)

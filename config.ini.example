@@ -9,12 +9,19 @@ DatabaseUser=<username>
 DatabasePassword=<password>
 
 
-[IMAGES]
-# The only option right now is AzureBlobStorage
-ImageStoreType=AzureBlobStorage
-ImageStoreHost=<hostname>
-ImageStoreContainer=<containername>
-ImageStoreKey=<keyname>
+[STORAGE]
+# ImageStoreType determines the location to store images to. Currently data can be stored in AzureBlobStorage
+# of local
+StorageType=AzureBlobStorage
+StoragePath=./
+
+# Delete from local drive after successful upload to the cloud
+StorageDeleteOnUpload=0
+
+# Configuration for Azure Storage Blobs
+StorageAzureStorageAccountName=<accountname>
+StorageAzureStorageContainer=<containername>
+StorageAzureStorageKey=<accountkey>
 
 [CAMERA]
 # Resolution must be supported by your camera or execution will fail
