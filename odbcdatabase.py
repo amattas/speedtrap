@@ -26,10 +26,7 @@ class ODBCDatabase:
     def _database_record(self, speed, recorded_time, file_uri=None):
         self.logger.debug("Entering _azure_record()")
         self.logger.debug("Leaving _azure_record()")
-        database_connection = pyodbc.connect(
-            'DRIVER=' + self._config.database_driver + ';SERVER=' + self._config.database_host + ';PORT=1433;DATABASE='
-            + self._config.database_name + ';UID=' + self._config.database_user + ';PWD='
-            + self._config.database_password)
+        database_connection = pyodbc.connect(self._config.database_connection_string)
         database_cursor = database_connection.cursor()
         database_query = ("INSERT INTO dbo.speedtrap (DateRecorded, SpeedRecorded, VideoUri) VALUES (?, ?, ?)")
         database_parameters = (time.strftime('%Y-%m-%d %H:%M:%S', recorded_time), speed, file_uri)

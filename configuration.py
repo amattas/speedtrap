@@ -19,11 +19,8 @@ class Configuration:
         self.database_filename = self._config_parser['DATABASE']['DatabaseFilename']
         self.enable_odbc = self._config_parser.getboolean('DATABASE', 'EnableODBC')
         if self.enable_odbc:
-            self.database_driver = self._config_parser['DATABASE']['DatabaseDriver']
-            self.database_name = self._config_parser['DATABASE']['DatabaseName']
-            self.database_host = self._config_parser['DATABASE']['DatabaseHost']
-            self.database_user = self._config_parser['DATABASE']['DatabaseUser']
-            self.database_password = self._config_parser['DATABASE']['DatabasePassword']
+            self.database_connection_string = self._config_parser['DATABASE']['DatabaseConnectionString']
+
 
         # Load Storage Configuration Section
         self.storage_path = self._config_parser['STORAGE']['StoragePath']

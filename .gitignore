@@ -13,3 +13,4 @@ __pycache__/*
 .idea
 *.avi
 config.ini
+*.csv
