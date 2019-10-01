@@ -10,12 +10,13 @@ from datarecorder import DataRecorder
 class VideoRecorder:
 
     def __init__(self, config):
-        self.logger = logging.getLogger('SpeedTrap')
+        self._config = config
+        logging.basicConfig(level=self._config.logging_level)
+        self.logger = logging.getLogger('SpeedTrap.VideoRecorder')
         self.logger.debug("Creating VideoRecorder() instance")
         self._recording = False
         self._speed = 0
         self._current_max = 0
-        self._config = config
         self._data_recorder = DataRecorder(config)
 
     def record_speed(self, speed):

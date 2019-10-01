@@ -7,9 +7,10 @@ import time
 class ODBCDatabase:
 
     def __init__(self, config):
-        self.logger = logging.getLogger('SpeedTrap')
-        self.logger.debug("Creating CloudDatabase() instance")
         self._config = config
+        logging.basicConfig(level=self._config.logging_level)
+        self.logger = logging.getLogger('SpeedTrap.ODBCDatabase')
+        self.logger.debug("Creating CloudDatabase() instance")
         self._cloud_storage_thread = None
 
     def database_record(self, speed, recorded_time, file_uri=None):

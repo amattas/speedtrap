@@ -7,9 +7,10 @@ from azure.storage.blob import BlockBlobService
 class CloudStorage:
 
     def __init__(self, config):
-        self.logger = logging.getLogger('SpeedTrap')
-        self.logger.debug("Creating CloudStorage() instance")
         self._config = config
+        logging.basicConfig(level=self._config.logging_level)
+        self.logger = logging.getLogger('SpeedTrap.CloudStorage')
+        self.logger.debug("Creating CloudStorage() instance")
         self._cloud_storage_thread = None
 
     def store_cloud_image(self, filename):

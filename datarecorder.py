@@ -7,9 +7,10 @@ from odbcdatabase import ODBCDatabase
 class DataRecorder:
 
     def __init__(self, config):
-        self.logger = logging.getLogger('SpeedTrap')
-        self.logger.debug("Creating DataRecorder() instance")
         self._config = config
+        logging.basicConfig(level=self._config.logging_level)
+        self.logger = logging.getLogger('SpeedTrap.DataRecorder')
+        self.logger.debug("Creating DataRecorder() instance")
         self._odbc_database = ODBCDatabase(config)
 
     def record(self, speed, recorded_time, file_uri=None):

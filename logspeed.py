@@ -7,10 +7,11 @@ from datarecorder import DataRecorder
 class LogSpeed:
 
     def __init__(self, config):
-        self.logger = logging.getLogger('SpeedTrap')
+        self._config = config
+        logging.basicConfig(level=self._config.logging_level)
+        self.logger = logging.getLogger('SpeedTrap.LogSpeed')
         self.logger.debug("Creating LogSpeed() instance")
         self._current_max = 0
-        self._config = config
         self._video_recorder = VideoRecorder(config)
         self._data_recorder = DataRecorder(config)
 

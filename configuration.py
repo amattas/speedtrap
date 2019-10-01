@@ -1,4 +1,5 @@
 import configparser
+import logging
 
 
 class Configuration:
@@ -12,6 +13,12 @@ class Configuration:
         self.record_threshold = int(self._config_parser['DEFAULT']['RecordThreshold'])
         self.clear_local_on_start = self._config_parser.getboolean('DEFAULT','ClearLocalOnStart')
         self.enable_azure = self._config_parser.getboolean('DEFAULT','EnableAzure')
+        if self._config_parser['DEFAULT']['LogLevel'] == 'DEBUG':
+            self.logging_level = logging.DEBUG
+        elif self._config_parser['DEFAULT']['LogLevel'] == 'INFO':
+            self.logging_level = logging.INFO
+        else:
+            self.logging_level = logging.WARN
 
         # Load Database Configuration Section
         self.enable_local_database = self._config_parser.getboolean('DATABASE','EnableLocalDatabase')
@@ -36,3 +43,17 @@ class Configuration:
         self.camera_framerate = int(self._config_parser['CAMERA']['FrameRate'])
         self.camera_fourcc_codec = self._config_parser['CAMERA']['FourCCVideoCodec']
         self.camera_file_extension = self._config_parser['CAMERA']['FileExtension']
+
+        self.radar_device_path = self._config_parser['RADAR']['DevicePath']
+        self.radar_speed_output_units = self._config_parser['RADAR']['SpeedOutputUnits']
+        self.radar_data_precision = self._config_parser['RADAR']['DataPrecision']
+        self.radar_sampling_rate = self._config_parser['RADAR']['SamplingRate']
+        self.radar_reported_minimum_speed = "R>{!s}\r".format(self.log_threshold)
+        self.radar_speed_reported_maximum = "R<0\r"
+        self.radar_direction_control = self._config_parser['RADAR']['DirectionControl']
+        self.radar_speed_report = self._config_parser['RADAR']['SpeedReport']
+        self.radar_processing_light_activity = self._config_parser['RADAR']['ProcessingLightActivity']
+        self.radar_json_mode = 'OJ'
+        self.radar_processing_led_control = self._config_parser['RADAR']['LedControl']
+        self.radar_blank_data_reporting = self._config_parser['RADAR']['BlankDataReporting']
+        self.radar_transmit_power = self._config_parser['RADAR']['TransmitPower']
