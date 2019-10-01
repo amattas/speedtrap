@@ -16,22 +16,7 @@ class VideoRecorder:
         self._speed = 0
         self._current_max = 0
         self._config = config
-        self._load_config(config)
         self._data_recorder = DataRecorder(config)
-
-    def _load_config(self, config):
-        self.logger.debug("Entering _load_config()")
-        self._xresolution = int(config['CAMERA']['XResolution'])
-        self._yresolution = int(config['CAMERA']['YResolution'])
-        self._frame_rate = int(config['CAMERA']['FrameRate'])
-        self._file_extension = config['CAMERA']['FileExtension']
-        self._fourcc_video_codec = config['CAMERA']['FourCCVideoCodec']
-        self._storage_path = config['STORAGE']['StoragePath']
-        if int(config['DEFAULT']['EnableAzure']) == 1:
-            self._enable_azure = True
-        else:
-            self._enable_azure = False
-        self.logger.debug("Leaving _load_config()")
 
     def record_speed(self, speed):
         self.logger.debug("Entering record_speed()")
@@ -65,19 +50,19 @@ class VideoRecorder:
     def _video_recorder(self):
         self.logger.debug("Entering video_recorder()")
         video_capture = cv2.VideoCapture(0)
-        video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, self._xresolution)
-        video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self._yresolution)
-        video_codec = cv2.VideoWriter_fourcc(*self._fourcc_video_codec)
-        self._current_video_filename = str(uuid.uuid4().hex) + self._file_extension
+        video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, self._config.camera_xresolution)
+        video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self._config.camera_yresolution)
+        video_codec = cv2.VideoWriter_fourcc(*self._config.camera_fourcc_codec)
+        self._current_video_filename = str(uuid.uuid4().hex) + self._config.camera_file_extension
         self.logger.debug("Writing file %s", self._current_video_filename)
-        video_writer = cv2.VideoWriter(self._storage_path+self._current_video_filename, video_codec, self._frame_rate,
-                                       (self._xresolution, self._yresolution))
+        video_writer = cv2.VideoWriter(self._config.storage_path+self._current_video_filename, video_codec, self._config.camera_framerate,
+                                       (self._config.camera_xresolution, self._config.camera_yresolution))
         while self._recording:
             ret, frame = video_capture.read()
             self._video_overlay(frame)
             self.logger.debug('Shape of source frame is %s', frame.shape)
             video_writer.write(frame)
-        if self._enable_azure:
+        if self._config.enable_azure:
             cs = cloudstorage.CloudStorage(self._config)
             cs.store_cloud_image(self._current_video_filename)
         # Call logging function
@@ -94,5 +79,5 @@ class VideoRecorder:
         font_thickness = 2
         color = (0, 0, 255)
         # text_size = cv2.getTextSize(overlay_text,font_face, font_scale, font_thickness)
-        cv2.putText(img, overlay_text, (20, self._yresolution-20), font_face, font_scale, color,
+        cv2.putText(img, overlay_text, (20, self._config.camera_yresolution-20), font_face, font_scale, color,
                     font_thickness, cv2.LINE_AA)

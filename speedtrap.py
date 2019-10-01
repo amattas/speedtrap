@@ -3,19 +3,13 @@ import logging
 import time
 import threading
 
+from configuration import Configuration
 from logspeed import LogSpeed
 
 def main():
     logger.info("SpeedTrap Starting")
     logger.info("Loading configuration file")
-    config = configparser.ConfigParser()
-    config.read('config.ini')
-    if logger.getEffectiveLevel() == logging.DEBUG:
-        for s in config.sections():
-            logger.debug('Loaded configuration section %s', s)
-            for k in config[s]:
-                logger.debug('Loaded configration key %s', k)
-    logger.info("Configuration file loaded")
+    config = Configuration("config.ini")
     log_speed = LogSpeed(config)
     log_speed.log_speed(25)
     time.sleep(5)
