@@ -28,6 +28,7 @@ class Configuration:
             self.azure_storage_account = self._config_parser['STORAGE']['StorageAzureStorageAccountName']
             self.azure_storage_container = self._config_parser['STORAGE']['StorageAzureStorageContainer']
             self.azure_storage_key = self._config_parser['STORAGE']['StorageAzureStorageKey']
+            self.azure_storage_uri_prefix = "https://{0!s}.blob.core.windows.net/{1!s}/".format(self.azure_storage_account, self.azure_storage_container)
             self.storage_delete_on_upload = self._config_parser.getboolean('STORAGE','StorageDeleteOnUpload')
 
         self.camera_xresolution = int(self._config_parser['CAMERA']['XResolution'])

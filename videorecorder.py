@@ -47,7 +47,12 @@ class VideoRecorder:
     def stop_recording(self):
         self.logger.debug("Entering stop_recording()")
         self._recording = False
-        self._data_recorder.record(self._current_max,time.localtime(),self._current_video_filename)
+        if self._config.enable_azure:
+            self._data_recorder.record(self._current_max,time.localtime(),self._config.azure_storage_uri_prefix
+                                       + self._current_video_filename)
+        else:
+            self._data_recorder.record(self._current_max,time.localtime(),self._config.storage_path
+                                       + self._current_video_filename)
         self._current_max = 0
         self.logger.debug("Leaving stop_recording()")
 
@@ -59,7 +64,8 @@ class VideoRecorder:
         video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self._config.camera_yresolution)
         video_codec = cv2.VideoWriter_fourcc(*self._config.camera_fourcc_codec)
         self.logger.debug("Writing file %s", self._current_video_filename)
-        video_writer = cv2.VideoWriter(self._config.storage_path+self._current_video_filename, video_codec, self._config.camera_framerate,
+        video_writer = cv2.VideoWriter(self._config.storage_path+self._current_video_filename, video_codec,
+                                       self._config.camera_framerate,
                                        (self._config.camera_xresolution, self._config.camera_yresolution))
         while self._recording:
             ret, frame = video_capture.read()
