@@ -3,6 +3,7 @@ import logging
 import time
 import threading
 
+from localtools import LocalTools
 from configuration import Configuration
 from logspeed import LogSpeed
 
@@ -10,6 +11,8 @@ def main():
     logger.info("SpeedTrap Starting")
     logger.info("Loading configuration file")
     config = Configuration("config.ini")
+    if config.clear_local_on_start:
+        LocalTools.clean_local(config)
     log_speed = LogSpeed(config)
     log_speed.log_speed(25)
     time.sleep(3)
