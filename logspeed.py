@@ -1,7 +1,8 @@
 import logging
-import threading
+import time
 
 from videorecorder import VideoRecorder
+from datarecorder import DataRecorder
 
 
 class LogSpeed:
@@ -12,6 +13,7 @@ class LogSpeed:
         self._load_config(config)
         self._current_max = 0
         self._video_recorder = VideoRecorder(config)
+        self._data_recorder = DataRecorder(config)
 
     def _load_config(self, config):
         self.logger.debug("Entering _load_config()")
@@ -26,7 +28,10 @@ class LogSpeed:
                 self.logger.debug("Current maximum speed was %s now %s", self._current_max, speed)
                 self._current_max = speed
             if speed >= self._record_threshold:
-                self.logger.debug("Logging speed %s to video")
+                self.logger.debug("Logging speed %s to video", speed)
+                self._video_recorder.record_speed(speed)
+            elif self._current_max >= self._record_threshold:
+                self.logger.debug("Logging speed %s to video",speed)
                 self._video_recorder.record_speed(speed)
         elif speed < self._log_threshold:
             if self._current_max >= self._record_threshold:
@@ -34,7 +39,7 @@ class LogSpeed:
                 self._video_recorder.stop_recording()
             elif self._current_max >= self._log_threshold:
                 self.logger.debug("Logging maximum speed")
-                #  Call Record Max Speed
+                self._data_recorder.record(self._current_max, time.localtime(), None)
                 return
             self._current_max = 0
         self.logger.debug("Entering log_speed()")
