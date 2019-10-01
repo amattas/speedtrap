@@ -38,6 +38,10 @@ class VideoRecorder:
         self.logger.debug("Entering start_recording_thread()")
         self._recording_thread = threading.Thread(target=self._video_recorder)
         self._recording_thread.start()
+        # Make sure recording thread has started
+        while not hasattr(self, '_current_video_filename'):
+            self.logger.debug("Waiting for recording thread to start")
+            continue
         self.logger.debug("Leaving start_recording_thread()")
 
     def stop_recording(self):
@@ -49,11 +53,11 @@ class VideoRecorder:
 
     def _video_recorder(self):
         self.logger.debug("Entering video_recorder()")
+        self._current_video_filename = str(uuid.uuid4().hex) + self._config.camera_file_extension
         video_capture = cv2.VideoCapture(0)
         video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, self._config.camera_xresolution)
         video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self._config.camera_yresolution)
         video_codec = cv2.VideoWriter_fourcc(*self._config.camera_fourcc_codec)
-        self._current_video_filename = str(uuid.uuid4().hex) + self._config.camera_file_extension
         self.logger.debug("Writing file %s", self._current_video_filename)
         video_writer = cv2.VideoWriter(self._config.storage_path+self._current_video_filename, video_codec, self._config.camera_framerate,
                                        (self._config.camera_xresolution, self._config.camera_yresolution))

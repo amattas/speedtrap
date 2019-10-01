@@ -17,10 +17,13 @@ class Configuration:
         self.enable_local_database = self._config_parser.getboolean('DATABASE','EnableLocalDatabase')
         self.database_path = self._config_parser['DATABASE']['DatabasePath']
         self.database_filename = self._config_parser['DATABASE']['DatabaseFilename']
-        if self.enable_azure:
-            self.azure_database_host = self._config_parser['DATABASE']['DatabaseAzureDatabaseHost']
-            self.azure_database_user = self._config_parser['DATABASE']['DatabaseAzureDatabaseUser']
-            self.azure_database_password = self._config_parser['DATABASE']['DatabaseAzureDatabasePassword']
+        self.enable_odbc = self._config_parser.getboolean('DATABASE', 'EnableODBC')
+        if self.enable_odbc:
+            self.database_driver = self._config_parser['DATABASE']['DatabaseDriver']
+            self.database_name = self._config_parser['DATABASE']['DatabaseName']
+            self.database_host = self._config_parser['DATABASE']['DatabaseHost']
+            self.database_user = self._config_parser['DATABASE']['DatabaseUser']
+            self.database_password = self._config_parser['DATABASE']['DatabasePassword']
 
         # Load Storage Configuration Section
         self.storage_path = self._config_parser['STORAGE']['StoragePath']

@@ -2,7 +2,7 @@ import logging;
 import csv;
 import time;
 
-from clouddatabase import CloudDatabase
+from odbcdatabase import ODBCDatabase
 
 class DataRecorder:
 
@@ -10,14 +10,14 @@ class DataRecorder:
         self.logger = logging.getLogger('SpeedTrap')
         self.logger.debug("Creating DataRecorder() instance")
         self._config = config
-        self._cloud_database = CloudDatabase(config)
+        self._odbc_database = ODBCDatabase(config)
 
     def record(self, speed, recorded_time, file_uri=None):
         self.logger.debug("Entering record()")
         if self._config.enable_local_database:
             self._record_storage(speed, recorded_time, file_uri)
-        if self._config.enable_azure:
-            self._cloud_database.cloud_record(speed, recorded_time, file_uri)
+        if self._config.enable_odbc:
+            self._odbc_database.database_record(speed, recorded_time, file_uri)
         self.logger.debug("Leaving record()")
 
     def _record_storage(self, speed, recorded_time, file_uri=None):
