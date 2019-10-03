@@ -1,7 +1,7 @@
 import logging
 import time
 
-from videorecorder import VideoRecorder
+from videorecorder2 import VideoRecorder2
 from datarecorder import DataRecorder
 
 class LogSpeed:
@@ -12,9 +12,9 @@ class LogSpeed:
         self.logger = logging.getLogger('SpeedTrap.LogSpeed')
         self.logger.debug("Creating LogSpeed() instance")
         self._current_max = 0
-        self._video_recorder = VideoRecorder(config)
+        self._video_recorder = VideoRecorder2(config)
         self._data_recorder = DataRecorder(config)
-
+        self._video_recorder.start_recorder()
 
     def log_speed(self, speed):
         self.logger.debug("Entering log_speed()")
@@ -22,19 +22,12 @@ class LogSpeed:
             if speed > self._current_max:
                 self.logger.debug("Current maximum speed was %s now %s", self._current_max, speed)
                 self._current_max = speed
-            #if speed >= self._config.record_threshold:
-            #    self.logger.debug("Logging speed %s to video", speed)
-            #    self._video_recorder.record_speed(speed)
-            # elif self._current_max >= self._config.record_threshold:
-            #   self.logger.debug("Logging speed %s to video",speed)
-            #    self._video_recorder.record_speed(speed)
+            if speed >= self._config.record_threshold:
+                self.logger.debug("Logging speed %s to video", speed)
+                self._video_recorder.start_recording()
         elif speed < self._config.log_threshold:
-            #if self._current_max >= self._config.record_threshold:
-            #    self.logger.debug("Stopping video recording")
-            #    self._video_recorder.stop_recording()
-            #elif self._current_max >= self._config.log_threshold:
+            file_name = self._video_recorder.stop_recording()
             if self._current_max >= self._config.log_threshold:
-                self.logger.debug("Logging maximum speed")
-                self._data_recorder.record(self._current_max, time.localtime())
+                self._data_recorder.record(self._current_max, time.localtime(), file_name)
             self._current_max = 0
-        self.logger.debug("Entering log_speed()")
+            self.logger.debug("Entering log_speed()")

@@ -18,6 +18,7 @@ def main():
     if config.clear_local_on_start:
         LocalTools.clean_local(config)
     log_speed = LogSpeed(config)
+
     radar = Radar(config)
     execute_loop = True
     while execute_loop:
