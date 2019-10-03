@@ -75,7 +75,11 @@ class VideoRecorder:
                                        (self._config.camera_xresolution, self._config.camera_yresolution))
         while self._recording:
             ret, frame = video_capture.read()
-            self._write_queue.put(frame)
+            if ret:
+                self.logger.debug("Putting video frame on queue.")
+                self._write_queue.put(frame)
+                self.logger.debug("Video queue size roughly %s", self._write_queue.qsize())
+
             #self._video_overlay(frame)
             #self.logger.debug('Shape of source frame is %s', frame.shape)
             #video_writer.write(frame)
@@ -92,7 +96,9 @@ class VideoRecorder:
         self.logger.debug("Entering _video_saver()")
         while self._recording and not self._write_queue.empty():
             if not self._write_queue.empty():
+                self.logger("Popping video from from queue")
                 frame = self._write_queue.get()
+                self.logger.debug("Video queue size roughly %s", self._write_queue.qsize())
                 self._video_overlay(frame)
                 self.logger.debug('Shape of source frame is %s', frame.shape)
                 self._video_writer.write(frame)
