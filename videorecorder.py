@@ -4,6 +4,7 @@ import threading
 import time
 import uuid
 import cloudstorage
+import queue
 
 from datarecorder import DataRecorder
 
@@ -18,6 +19,7 @@ class VideoRecorder:
         self._speed = 0
         self._current_max = 0
         self._data_recorder = DataRecorder(config)
+        self._recordQueue = queue.Queue()
 
     def record_speed(self, speed):
         self.logger.debug("Entering record_speed()")
@@ -39,6 +41,8 @@ class VideoRecorder:
         self.logger.debug("Entering start_recording_thread()")
         self._recording_thread = threading.Thread(target=self._video_recorder)
         self._recording_thread.start()
+        self._saver_thread = threading.Thread(target=self._video_saver)
+        self._saver_thread.start()
         # Make sure recording thread has started
         while not hasattr(self, '_current_video_filename'):
             self.logger.debug("Waiting for recording thread to start")
@@ -65,22 +69,34 @@ class VideoRecorder:
         video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self._config.camera_yresolution)
         video_codec = cv2.VideoWriter_fourcc(*self._config.camera_fourcc_codec)
         self.logger.debug("Writing file %s", self._current_video_filename)
-        video_writer = cv2.VideoWriter(self._config.storage_path+self._current_video_filename, video_codec,
+        self._video_writer = cv2.VideoWriter(self._config.storage_path+self._current_video_filename, video_codec,
                                        self._config.camera_framerate,
                                        (self._config.camera_xresolution, self._config.camera_yresolution))
+        self._write_queue = queue.Queue()
         while self._recording:
             ret, frame = video_capture.read()
-            self._video_overlay(frame)
-            self.logger.debug('Shape of source frame is %s', frame.shape)
-            video_writer.write(frame)
+            self._write_queue.put(frame)
+            #self._video_overlay(frame)
+            #self.logger.debug('Shape of source frame is %s', frame.shape)
+            #video_writer.write(frame)
         if self._config.enable_azure:
             cs = cloudstorage.CloudStorage(self._config)
             cs.store_cloud_image(self._current_video_filename)
         # Call logging function
         video_capture.release()
-        video_writer.release()
+        self._video_writer.release()
         cv2.destroyAllWindows()
         self.logger.debug("Leaving video_recorder()")
+
+    def _video_saver(self):
+        self.logger.debug("Entering _video_saver()")
+        while self._recording:
+            if not self._write_queue.empty():
+                frame = self._write_queue.get()
+                self._video_overlay(frame)
+                self.logger.debug('Shape of source frame is %s', frame.shape)
+                self._video_writer.write(frame)
+        self.logger.debug("Leaving _video_saver()")
 
     def _video_overlay(self, img):
         overlay_text = '{0!s} mph     {1!s}'.format(self._speed, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
