@@ -89,7 +89,7 @@ class VideoRecorder2:
                     self.logger.debug("Video queue empty")
                     self._write_queue_empty = True
                     continue
-            time.sleep(5)
+            time.sleep(1)
         self._video_writer.release()
         if self._config.enable_azure:
             cs = cloudstorage.CloudStorage(self._config)
