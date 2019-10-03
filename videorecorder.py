@@ -93,7 +93,6 @@ class VideoRecorder:
             cs.store_cloud_image(self._current_video_filename)
         # Call logging function
         video_capture.release()
-        self._video_writer.release()
         cv2.destroyAllWindows()
         self.logger.debug("Leaving video_recorder()")
 
@@ -113,6 +112,7 @@ class VideoRecorder:
             except queue.Empty:
                 self.logger.debug("Video queue empty")
                 self._write_queue_empty = True
+        self._video_writer.release()
         self.logger.debug("Leaving _video_saver()")
 
     def _video_overlay(self, img):
