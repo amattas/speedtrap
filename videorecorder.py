@@ -40,12 +40,8 @@ class VideoRecorder:
 
     def _start_recording_thread(self):
         self.logger.debug("Entering start_recording_thread()")
-        while self._saver_thread.is_alive():
-            self.logger.debug("Waiting for existing video saver thread to complete")
         self._recording_thread = threading.Thread(target=self._video_recorder)
         self._recording_thread.start()
-        self._saver_thread = threading.Thread(target=self._video_saver)
-        self._saver_thread.start()
         # Make sure recording thread has started
         while not hasattr(self, '_current_video_filename'):
             self.logger.debug("Waiting for recording thread to start")
@@ -70,6 +66,9 @@ class VideoRecorder:
 
     def _video_recorder(self):
         self.logger.debug("Entering video_recorder()")
+        self.logger.debug("Starting saver thread")
+        self._saver_thread = threading.Thread(target=self._video_saver)
+        self._saver_thread.start()
         self._current_video_filename = str(uuid.uuid4().hex) + self._config.camera_file_extension
         video_capture = cv2.VideoCapture(0)
         video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, self._config.camera_xresolution)
@@ -95,6 +94,7 @@ class VideoRecorder:
             cs.store_cloud_image(self._current_video_filename)
         # Call logging function
         video_capture.release()
+        self._saver_thread.join()
         cv2.destroyAllWindows()
         self.logger.debug("Leaving video_recorder()")
 
