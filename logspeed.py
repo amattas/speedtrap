@@ -20,7 +20,7 @@ class LogSpeed:
         self.logger.debug("Entering log_speed()")
         if self._current_max == 0 and speed == 0:
             pass
-        if speed >= self._config.log_threshold:
+        elif speed >= self._config.log_threshold:
             if speed > self._current_max:
                 self.logger.debug("Current maximum speed was %s now %s", self._current_max, speed)
                 self._current_max = speed

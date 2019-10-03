@@ -119,7 +119,7 @@ class VideoRecorder2:
         self._video_recorder_save = False
         if self._config.enable_azure:
             cs = cloudstorage.CloudStorage(self._config)
-            cs.store_cloud_image(self.current_filename)
+            cs.store_cloud_image(current_filename)
         self.logger.debug("Leaving stop_recording()")
         return current_filename
 
