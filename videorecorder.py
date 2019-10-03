@@ -51,8 +51,9 @@ class VideoRecorder:
 
     def stop_recording(self):
         self.logger.debug("Entering stop_recording()")
-        time.sleep(5)
         self._recording = False
+        while not self._write_queue.empty():
+            pass
         if self._config.enable_azure:
             self._data_recorder.record(self._current_max,time.localtime(),self._config.azure_storage_uri_prefix
                                        + self._current_video_filename)
