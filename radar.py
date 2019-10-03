@@ -1,5 +1,6 @@
 import serial
 import logging
+import time
 
 class Radar:
 
@@ -9,29 +10,45 @@ class Radar:
         self.logger = logging.getLogger('SpeedTrap.Radar')
         self.logger.debug("Creating Radar() instance")
         self._config = config
-        self._serial_connection = serial.Serial(
-            port=self._config.radar_device_path,
-            baudrate=9600,
-            parity=serial.PARITY_NONE,
-            stopbits=serial.STOPBITS_ONE,
-            bytesize=serial.EIGHTBITS,
-            timeout=1,
-            writeTimeout=2
-        )
-        self._serial_connection.flushInput()
-        self._serial_connection.flushOutput()
-        self.send_serial_command(self._config.radar_speed_output_units)
-        self.send_serial_command(self._config.radar_data_precision)
-        self.send_serial_command(self._config.radar_sampling_rate)
-        self.send_serial_command(self._config.radar_reported_minimum_speed)
-        self.send_serial_command(self._config.radar_speed_reported_maximum)
-        self.send_serial_command(self._config.radar_direction_control)
-        self.send_serial_command(self._config.radar_speed_report)
-        self.send_serial_command(self._config.radar_processing_light_activity)
-        self.send_serial_command(self._config.radar_json_mode)
-        self.send_serial_command(self._config.radar_processing_led_control)
-        self.send_serial_command(self._config.radar_blank_data_reporting)
-        self.send_serial_command(self._config.radar_transmit_power)
+        self._serial_connection = None
+        #Handle busy serial port
+        for _retry in range(5):
+            try:
+                serial.Serial(
+                    port=self._config.radar_device_path,
+                    baudrate=9600,
+                    parity=serial.PARITY_NONE,
+                    stopbits=serial.STOPBITS_ONE,
+                    bytesize=serial.EIGHTBITS,
+                    timeout=1,
+                    writeTimeout=2
+                )
+                break
+            except:
+                if _retry < 5:
+                    self.logger.debug("Serial port busy, connection attempt #%s, retrying in 3 seconds", _retry)
+                else:
+                    self.logger.debug("Serial port busy, connection attempt #%s, failed", _retry)
+                    raise
+                time.sleep(3)
+                pass
+        self._configure_serial_device()
+
+    def _configure_serial_device(self):
+            self._serial_connection.flushInput()
+            self._serial_connection.flushOutput()
+            self.send_serial_command(self._config.radar_speed_output_units)
+            self.send_serial_command(self._config.radar_data_precision)
+            self.send_serial_command(self._config.radar_sampling_rate)
+            self.send_serial_command(self._config.radar_reported_minimum_speed)
+            self.send_serial_command(self._config.radar_speed_reported_maximum)
+            self.send_serial_command(self._config.radar_direction_control)
+            self.send_serial_command(self._config.radar_speed_report)
+            self.send_serial_command(self._config.radar_processing_light_activity)
+            self.send_serial_command(self._config.radar_json_mode)
+            self.send_serial_command(self._config.radar_processing_led_control)
+            self.send_serial_command(self._config.radar_blank_data_reporting)
+            self.send_serial_command(self._config.radar_transmit_power)
 
     # sendSerialCommand: function for sending commands to the OPS-241A module
     def send_serial_command(self, command):
