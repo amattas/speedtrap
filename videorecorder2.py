@@ -83,7 +83,7 @@ class VideoRecorder2:
                                                              self._video_codec, self._config.camera_framerate,
                                                              (self._config.camera_xresolution,
                                                               self._config.camera_yresolution))
-                    elif not self._last_filename == _video_queue_record[0] and _video_queue_record[0] is not None:
+                    elif not self._last_filename == _video_queue_record[0]:
                         self.logger.debug("New filename is %s", self._last_filename)
                         self._last_filename = _video_queue_record[0]
                         self._video_writer.release()
@@ -144,7 +144,6 @@ class VideoRecorder2:
     def stop_recording(self):
         self.logger.debug("Entering stop_recording()")
         current_filename = self._current_filename
-        self._current_filename = None
         self._video_recorder_save = False
         self.logger.debug("Leaving stop_recording()")
 
