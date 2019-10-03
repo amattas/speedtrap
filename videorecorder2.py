@@ -71,7 +71,9 @@ class VideoRecorder2:
                                              self._config.camera_framerate,
                                              (self._config.camera_xresolution, self._config.camera_yresolution))
         while self._video_recorder_enabled or not self._video_queue.empty():
+            self.logger.debug("Recorder Enabled: %s, Video queue empty: %s", self._video_recorder_enabled, self._video_queue.empty())
             while not self._video_queue.empty():
+                self.logger.debug("Video queue empty: %s", self._video_queue.empty())
                 try:
                     self.logger.debug("Attempting to pop video from from queue")
                     _video_queue_record = self._video_queue.get(False)
@@ -90,6 +92,7 @@ class VideoRecorder2:
                     self._write_queue_empty = True
                     continue
             time.sleep(1)
+        self.logger.debug("Completing video writing")
         self._video_writer.release()
         if self._config.enable_azure:
             cs = cloudstorage.CloudStorage(self._config)
