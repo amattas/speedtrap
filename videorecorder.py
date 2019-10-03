@@ -81,7 +81,7 @@ class VideoRecorder:
             ret, frame = video_capture.read()
             if ret:
                 self.logger.debug("Putting video frame on queue.")
-                self._write_queue_empty = True
+                self._write_queue_empty = False
                 self._write_queue.put(frame)
                 self.logger.debug("Video queue size roughly %s", self._write_queue.qsize())
 
@@ -100,15 +100,15 @@ class VideoRecorder:
     def _video_saver(self):
         self.logger.debug("Entering _video_saver()")
         while self._recording:
-            while not self._write_queue_empty:
+            while not self:
                 try:
                     self.logger.debug("Popping video from from queue")
                     frame = self._write_queue.get()
+                    self._write_queue.task_done()
                     self.logger.debug("Video queue size roughly %s", self._write_queue.qsize())
                     self._video_overlay(frame)
                     self.logger.debug('Shape of source frame is %s', frame.shape)
                     self._video_writer.write(frame)
-                    self._write_queue.task_done()
                 except queue.Empty:
                     self.logger.debug("Video queue empty")
                     self._write_queue_empty = True
