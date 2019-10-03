@@ -27,11 +27,13 @@ class Radar:
             except:
                 if _retry < 5:
                     self.logger.debug("Serial port busy, connection attempt #%s, retrying in 3 seconds", _retry)
+                    time.sleep(3)
+                    pass
                 else:
                     self.logger.debug("Serial port busy, connection attempt #%s, failed", _retry)
                     raise
-                time.sleep(3)
-                pass
+
+
         self._configure_serial_device()
 
     def _configure_serial_device(self):
