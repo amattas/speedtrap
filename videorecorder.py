@@ -113,6 +113,7 @@ class VideoRecorder:
             except queue.Empty:
                 self.logger.debug("Video queue empty")
                 self._write_queue_empty = True
+                pass
         self._video_writer.release()
         self.logger.debug("Leaving _video_saver()")
 
