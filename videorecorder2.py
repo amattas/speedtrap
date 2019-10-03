@@ -68,11 +68,11 @@ class VideoRecorder2:
         self._last_filename = None
         self._video_codec = cv2.VideoWriter_fourcc(*self._config.camera_fourcc_codec)
         while self._video_recorder_enabled:
-            while self._video_recorder_save:
+            while True:
                 self.logger.debug("Recorder Save Enabled: %s, Video queue empty: %s", self._video_recorder_save,
                                   self._video_queue.empty())
                 try:
-                    self.logger.debug("Attempting to pop video from from queue")
+                    self.logger.debug("Attempting to pop video from from queue, queue size is roughly %s", self._video_queue.qsize())
                     _video_queue_record = self._video_queue.get(False)
                     self._video_queue.task_done()
                     self.logger.debug("Received filename %s", _video_queue_record[0])
@@ -97,7 +97,8 @@ class VideoRecorder2:
                     self.logger.debug('Entered _video_writer() exception logic')
                     self.logger.debug('*** Last Filename: %s', self._last_filename)
                     if self._last_filename is None:
-                        continue
+                        time.sleep(3)
+                        break
                     self.logger.debug("Video queue empty")
                     self.logger.debug("Completing video writing")
                     self._video_writer.release()
@@ -108,8 +109,8 @@ class VideoRecorder2:
                     self._last_filename = None
                     self._video_writer.release()
                     self.logger.debug("Leaving _video_writer()")
+                    time.sleep(3)
                     break
-            time.sleep(1)
 
 
     def _video_overlay(self, img):
