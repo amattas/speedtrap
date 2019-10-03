@@ -20,6 +20,7 @@ class VideoRecorder:
         self._current_max = 0
         self._data_recorder = DataRecorder(config)
         self._write_queue = queue.Queue()
+        self._write_queue_empty = True
 
     def record_speed(self, speed):
         self.logger.debug("Entering record_speed()")
@@ -52,7 +53,7 @@ class VideoRecorder:
     def stop_recording(self):
         self.logger.debug("Entering stop_recording()")
         self._recording = False
-        while not self._write_queue.empty():
+        while not self._write_queue_empty:
             self.logger.debug("Waiting for video queue to drain")
             self.logger.debug("Video queue size roughly %s", self._write_queue.qsize())
             pass
@@ -80,6 +81,7 @@ class VideoRecorder:
             ret, frame = video_capture.read()
             if ret:
                 self.logger.debug("Putting video frame on queue.")
+                self._write_queue_empty = True
                 self._write_queue.put(frame)
                 self.logger.debug("Video queue size roughly %s", self._write_queue.qsize())
 
@@ -98,13 +100,18 @@ class VideoRecorder:
     def _video_saver(self):
         self.logger.debug("Entering _video_saver()")
         while self._recording:
-            while not self._write_queue.empty():
-                self.logger.debug("Popping video from from queue")
-                frame = self._write_queue.get()
-                self.logger.debug("Video queue size roughly %s", self._write_queue.qsize())
-                self._video_overlay(frame)
-                self.logger.debug('Shape of source frame is %s', frame.shape)
-                self._video_writer.write(frame)
+            while True:
+                try:
+                    self.logger.debug("Popping video from from queue")
+                    frame = self._write_queue.get()
+                    self.logger.debug("Video queue size roughly %s", self._write_queue.qsize())
+                    self._video_overlay(frame)
+                    self.logger.debug('Shape of source frame is %s', frame.shape)
+                    self._video_writer.write(frame)
+                    self._write_queue.task_done()
+                except queue.Empty:
+                    self._write_queue_empty = True
+                    break;
         self.logger.debug("Leaving _video_saver()")
 
     def _video_overlay(self, img):
