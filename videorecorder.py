@@ -70,6 +70,10 @@ class VideoRecorder:
         self.logger.debug("Starting saver thread")
         self._current_video_filename = str(uuid.uuid4().hex) + self._config.camera_file_extension
         self.logger.debug("Video file name is %s", self._current_video_filename)
+        self.logger.debug("Creating video writer")
+        self._video_writer = cv2.VideoWriter(self._config.storage_path+self._current_video_filename, video_codec,
+                                       self._config.camera_framerate,
+                                       (self._config.camera_xresolution, self._config.camera_yresolution))
         self._saver_thread = threading.Thread(target=self._video_saver)
         self._saver_thread.start()
         video_capture = cv2.VideoCapture(0)
@@ -77,9 +81,6 @@ class VideoRecorder:
         video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self._config.camera_yresolution)
         video_codec = cv2.VideoWriter_fourcc(*self._config.camera_fourcc_codec)
         self.logger.debug("Writing file %s", self._current_video_filename)
-        self._video_writer = cv2.VideoWriter(self._config.storage_path+self._current_video_filename, video_codec,
-                                       self._config.camera_framerate,
-                                       (self._config.camera_xresolution, self._config.camera_yresolution))
         while self._recording:
             ret, frame = video_capture.read()
             if ret:
