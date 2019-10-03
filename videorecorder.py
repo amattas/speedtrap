@@ -19,7 +19,7 @@ class VideoRecorder:
         self._speed = 0
         self._current_max = 0
         self._data_recorder = DataRecorder(config)
-        self._recordQueue = queue.Queue()
+        self.write_queue = queue.Queue()
 
     def record_speed(self, speed):
         self.logger.debug("Entering record_speed()")
@@ -73,7 +73,6 @@ class VideoRecorder:
         self._video_writer = cv2.VideoWriter(self._config.storage_path+self._current_video_filename, video_codec,
                                        self._config.camera_framerate,
                                        (self._config.camera_xresolution, self._config.camera_yresolution))
-        self._write_queue = queue.Queue()
         while self._recording:
             ret, frame = video_capture.read()
             self._write_queue.put(frame)
