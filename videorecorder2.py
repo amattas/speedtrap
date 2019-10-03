@@ -136,8 +136,8 @@ class VideoRecorder2:
     def start_recording(self, speed=0):
         self.logger.debug("Entering start_recording()")
         self._speed = speed
-        self._video_recorder_save = True
         self._current_filename = str(uuid.uuid4().hex) + self._config.camera_file_extension
+        self._video_recorder_save = True
         self.logger.debug("Leaving start_recording()")
         return self._current_filename
 
