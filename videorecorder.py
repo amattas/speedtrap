@@ -40,6 +40,8 @@ class VideoRecorder:
 
     def _start_recording_thread(self):
         self.logger.debug("Entering start_recording_thread()")
+        while self._saver_thread.is_alive():
+            self.logger.debug("Waiting for existing video saver thread to complete")
         self._recording_thread = threading.Thread(target=self._video_recorder)
         self._recording_thread.start()
         self._saver_thread = threading.Thread(target=self._video_saver)
