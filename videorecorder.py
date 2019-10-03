@@ -34,8 +34,9 @@ class VideoRecorder:
             if not hasattr(self, '_recording_thread'):
                 self.logger.debug("Thread not found, starting new recording thread")
                 self._start_recording_thread()
-            elif not self._recording_thread.is_alive():
-                self.logger.debug("Thread not alive, starting new recording thread")
+            else:
+                while self._recording_thread.is_alive():
+                    self.logger.debug("Waitinf for existing thread to finish")
                 self._start_recording_thread()
 
     def _start_recording_thread(self):
