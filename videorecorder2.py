@@ -144,9 +144,9 @@ class VideoRecorder2:
 
     def stop_recording(self):
         self.logger.debug("Entering stop_recording()")
-        current_filename = self._current_filename
         self._video_recorder_save = False
         self.logger.debug("Leaving stop_recording()")
+        return self._current_filename
 
 
 
