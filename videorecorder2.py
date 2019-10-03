@@ -77,11 +77,13 @@ class VideoRecorder2:
                     self._video_queue.task_done()
                     if self._last_filename is None:
                         self._last_filename = _video_queue_record[0]
+                        self.logger.debug("New filename is %s", self._last_filename)
                         self._video_writer = cv2.VideoWriter(self._config.storage_path + self._last_filename,
                                                              self._video_codec, self._config.camera_framerate,
                                                              (self._config.camera_xresolution,
                                                               self._config.camera_yresolution))
                     elif not self._last_filename == _video_queue_record[0]:
+                        self.logger.debug("New filename is %s", self._last_filename)
                         self._last_filename = _video_queue_record[0]
                         self._video_writer.release()
                         self._video_writer = cv2.VideoWriter(self._config.storage_path + self._last_filename,
