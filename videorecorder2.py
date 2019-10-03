@@ -29,11 +29,13 @@ class VideoRecorder2:
         if not self._video_reader_thread.is_alive():
             self.logger.debug("Starting new _video_reader() thread")
             self._video_reader_thread = threading.Thread(target=self._video_reader)
+            self._video_reader_thread.start()
         else:
             self.logger.debug("_video_reader() thread already started")
         if not self._video_writer_thread.is_alive():
-            self.logger.debug("Starting new _video_reader() thread")
+            self.logger.debug("Starting new _video_writer() thread")
             self._video_writer_thread = threading.Thread(target=self._video_writer)
+            self._video_writer_thread.start()
         else:
             self.logger.debug("_video_reader() thread already started")
         self.logger.debug("Leaving start_recorder()")
