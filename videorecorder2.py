@@ -91,6 +91,8 @@ class VideoRecorder2:
                     self.logger.debug('Shape of source frame is %s', _write_frame.shape)
                     self._video_writer.write(_write_frame)
                 except:
+                    if self._last_filename is None:
+                        continue
                     self.logger.debug("Video queue empty")
                     self.logger.debug("Completing video writing")
                     self._video_writer.release()
