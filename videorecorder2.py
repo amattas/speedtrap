@@ -25,11 +25,11 @@ class VideoRecorder2:
     def start_recorder(self):
         self.logger.debug("Entering start_recorder()")
         self._video_recorder_enabled = True
-        if not hasattr(self, '_video_reader_thread'):
+        if self._video_reader_thread is not None:
             self._video_reader_thread = threading.Thread(target=self._video_reader)
         elif not self._video_reader_thread.is_alive():
             self._video_reader_thread = threading.Thread(target=self._video_reader)
-        if not hasattr(self, '_video_writer_thread'):
+        if self._video_writer_thread is not None:
             self._video_writer_thread = threading.Thread(target=self._video_writer)
         elif not self._video_writer_thread.is_alive():
             self._video_writer_thread = threading.Thread(target=self._video_writer)
