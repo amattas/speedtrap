@@ -71,23 +71,25 @@ class VideoRecorder2:
                                              self._config.camera_framerate,
                                              (self._config.camera_xresolution, self._config.camera_yresolution))
         while self._video_recorder_enabled or not self._video_queue.empty():
-            try:
-                self.logger.debug("Attempting to pop video from from queue")
-                _video_queue_record = self._video_queue.get(False)
-                self._video_queue.task_done()
-                if not self._last_filename == _video_queue_record[0]:
-                    self._last_filename = _video_queue_record[0]
-                    self._video_writer.release()
-                    self._video_writer = cv2.VideoWriter(self._config.storage_path + self._last_filename,
-                                                         self._video_codec, self._config.camera_framerate,
-                                                         (self._config.camera_xresolution, self._config.camera_yresolution))
-                _write_frame = self._video_overlay(_video_queue_record[1])
-                self.logger.debug('Shape of source frame is %s', _write_frame.shape)
-                self._video_writer.write(_write_frame)
-            except:
-                self.logger.debug("Video queue empty")
-                self._write_queue_empty = True
-                continue
+            while not self._video_queue.empty():
+                try:
+                    self.logger.debug("Attempting to pop video from from queue")
+                    _video_queue_record = self._video_queue.get(False)
+                    self._video_queue.task_done()
+                    if not self._last_filename == _video_queue_record[0]:
+                        self._last_filename = _video_queue_record[0]
+                        self._video_writer.release()
+                        self._video_writer = cv2.VideoWriter(self._config.storage_path + self._last_filename,
+                                                             self._video_codec, self._config.camera_framerate,
+                                                             (self._config.camera_xresolution, self._config.camera_yresolution))
+                    _write_frame = self._video_overlay(_video_queue_record[1])
+                    self.logger.debug('Shape of source frame is %s', _write_frame.shape)
+                    self._video_writer.write(_write_frame)
+                except:
+                    self.logger.debug("Video queue empty")
+                    self._write_queue_empty = True
+                    continue
+            time.sleep(5)
         self._video_writer.release()
         if self._config.enable_azure:
             cs = cloudstorage.CloudStorage(self._config)
