@@ -90,7 +90,7 @@ class VideoRecorder:
 
     def _video_saver(self):
         self.logger.debug("Entering _video_saver()")
-        while self._recording:
+        while self._recording and not self._write_queue.empty():
             if not self._write_queue.empty():
                 frame = self._write_queue.get()
                 self._video_overlay(frame)
