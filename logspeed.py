@@ -31,7 +31,7 @@ class LogSpeed:
                     self._current_filename = self._video_recorder.start_recording(speed)
                 else:
                     self._video_recorder.set_speed(speed)
-        elif speed < self._config.log_threshold:
+        elif speed < self._config.log_threshold-5:
             file_name = self._video_recorder.stop_recording()
             if self._current_max >= self._config.log_threshold:
                 self._data_recorder.record(self._current_max, time.localtime(), file_name)
