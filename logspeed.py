@@ -22,17 +22,18 @@ class LogSpeed:
             if speed > self._current_max:
                 self.logger.debug("Current maximum speed was %s now %s", self._current_max, speed)
                 self._current_max = speed
-            if speed >= self._config.record_threshold:
-                self.logger.debug("Logging speed %s to video", speed)
-                self._video_recorder.record_speed(speed)
-            elif self._current_max >= self._config.record_threshold:
-                self.logger.debug("Logging speed %s to video",speed)
-                self._video_recorder.record_speed(speed)
+            #if speed >= self._config.record_threshold:
+            #    self.logger.debug("Logging speed %s to video", speed)
+            #    self._video_recorder.record_speed(speed)
+            # elif self._current_max >= self._config.record_threshold:
+            #   self.logger.debug("Logging speed %s to video",speed)
+            #    self._video_recorder.record_speed(speed)
         elif speed < self._config.log_threshold:
-            if self._current_max >= self._config.record_threshold:
-                self.logger.debug("Stopping video recording")
-                self._video_recorder.stop_recording()
-            elif self._current_max >= self._config.log_threshold:
+            #if self._current_max >= self._config.record_threshold:
+            #    self.logger.debug("Stopping video recording")
+            #    self._video_recorder.stop_recording()
+            #elif self._current_max >= self._config.log_threshold:
+            if self._current_max >= self._config.log_threshold:
                 self.logger.debug("Logging maximum speed")
                 self._data_recorder.record(self._current_max, time.localtime())
             self._current_max = 0
