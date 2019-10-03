@@ -14,7 +14,7 @@ class Radar:
         #Handle busy serial port
         for _retry in range(5):
             try:
-                serial.Serial(
+                self._serial_connection = serial.Serial(
                     port=self._config.radar_device_path,
                     baudrate=9600,
                     parity=serial.PARITY_NONE,
