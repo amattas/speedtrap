@@ -94,7 +94,7 @@ class VideoRecorder:
 
     def _video_saver(self):
         self.logger.debug("Entering _video_saver()")
-        while self._recording and not self._write_queue.empty():
+        while self._recording or not self._write_queue.empty():
             if not self._write_queue.empty():
                 self.logger("Popping video from from queue")
                 frame = self._write_queue.get()
