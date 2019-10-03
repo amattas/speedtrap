@@ -56,6 +56,7 @@ class VideoRecorder:
         while not self._write_queue_empty:
             self.logger.debug("Waiting for video queue to drain")
             self.logger.debug("Video queue size roughly %s", self._write_queue.qsize())
+            time.sleep(1)
             pass
         if self._config.enable_azure:
             self._data_recorder.record(self._current_max,time.localtime(),self._config.azure_storage_uri_prefix
