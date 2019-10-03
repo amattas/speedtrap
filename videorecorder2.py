@@ -19,19 +19,15 @@ class VideoRecorder2:
         self._video_queue = queue.Queue()
         self._speed = 0
         self._current_filename = 'unknown' + self._config.camera_file_extension
-        self._video_writer_thread = None
-        self._video_reader_thread = None
+        self._video_writer_thread = threading.Thread()
+        self._video_reader_thread = threading.Thread()
 
     def start_recorder(self):
         self.logger.debug("Entering start_recorder()")
         self._video_recorder_enabled = True
-        if self._video_reader_thread is None:
+        if not self._video_reader_thread.is_alive():
             self._video_reader_thread = threading.Thread(target=self._video_reader)
-        elif not self._video_reader_thread.is_alive():
-            self._video_reader_thread = threading.Thread(target=self._video_reader)
-        if self._video_writer_thread is None:
-            self._video_writer_thread = threading.Thread(target=self._video_writer)
-        elif not self._video_writer_thread.is_alive():
+        if not self._video_writer_thread.is_alive():
             self._video_writer_thread = threading.Thread(target=self._video_writer)
         self.logger.debug("Leaving start_recorder()")
 
@@ -41,7 +37,6 @@ class VideoRecorder2:
         self._video_reader_thread.join()
         self._video_writer_thread.join()
         self.logger.debug("Leaving stop_recorder()")
-
 
     def _video_reader(self):
         self.logger.debug("Entering _video_reader()")
