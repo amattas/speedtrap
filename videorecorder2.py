@@ -75,6 +75,7 @@ class VideoRecorder2:
                     self.logger.debug("Attempting to pop video from from queue")
                     _video_queue_record = self._video_queue.get(False)
                     self._video_queue.task_done()
+                    self.logger.debug("Received filename %s", _video_queue_record[0])
                     if self._last_filename is None:
                         self._last_filename = _video_queue_record[0]
                         self.logger.debug("New filename is %s", self._last_filename)
@@ -93,6 +94,7 @@ class VideoRecorder2:
                     self.logger.debug('Shape of source frame is %s', _write_frame.shape)
                     self._video_writer.write(_write_frame)
                 except:
+                    self.logger.debug('Entered _video_writer() exception logic')
                     if self._last_filename is None:
                         continue
                     self.logger.debug("Video queue empty")
