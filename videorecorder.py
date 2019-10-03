@@ -99,21 +99,20 @@ class VideoRecorder:
 
     def _video_saver(self):
         self.logger.debug("Entering _video_saver()")
-        while self._recording:
+        while self._recording or self._write_queue_empty:
             self.logger.debug("Video saver detected recording")
-            while not self:
-                self.logger.debug("Video saver checking queue")
-                try:
-                    self.logger.debug("Popping video from from queue")
-                    frame = self._write_queue.get()
-                    self._write_queue.task_done()
-                    self.logger.debug("Video queue size roughly %s", self._write_queue.qsize())
-                    self._video_overlay(frame)
-                    self.logger.debug('Shape of source frame is %s', frame.shape)
-                    self._video_writer.write(frame)
-                except queue.Empty:
-                    self.logger.debug("Video queue empty")
-                    self._write_queue_empty = True
+            self.logger.debug("Video saver checking queue")
+            try:
+                self.logger.debug("Popping video from from queue")
+                frame = self._write_queue.get()
+                self._write_queue.task_done()
+                self.logger.debug("Video queue size roughly %s", self._write_queue.qsize())
+                self._video_overlay(frame)
+                self.logger.debug('Shape of source frame is %s', frame.shape)
+                self._video_writer.write(frame)
+            except queue.Empty:
+                self.logger.debug("Video queue empty")
+                self._write_queue_empty = True
         self.logger.debug("Leaving _video_saver()")
 
     def _video_overlay(self, img):
