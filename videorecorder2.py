@@ -68,7 +68,7 @@ class VideoRecorder2:
         self._last_filename = None
         self._video_codec = cv2.VideoWriter_fourcc(*self._config.camera_fourcc_codec)
         while self._video_recorder_enabled:
-            while self._video_recorder_save or not self._video_queue.empty():
+            while self._video_recorder_save:
                 self.logger.debug("Recorder Save Enabled: %s, Video queue empty: %s", self._video_recorder_save,
                                   self._video_queue.empty())
                 try:
@@ -108,7 +108,7 @@ class VideoRecorder2:
                     self._last_filename = None
                     self._video_writer.release()
                     self.logger.debug("Leaving _video_writer()")
-                    continue
+                    break
             time.sleep(1)
 
 
