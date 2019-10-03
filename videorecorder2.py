@@ -95,14 +95,16 @@ class VideoRecorder2:
                     self._video_writer.write(_write_frame)
                 except:
                     self.logger.debug('Entered _video_writer() exception logic')
+                    self.logger.debug('*** Last Filename: %s', self._last_filename)
                     if self._last_filename is None:
                         continue
                     self.logger.debug("Video queue empty")
                     self.logger.debug("Completing video writing")
                     self._video_writer.release()
                     if self._config.enable_azure:
+                        cloud_storage_file_path = self._config.storage_path + self._last_filename
                         cs = cloudstorage.CloudStorage(self._config)
-                        cs.store_cloud_image(self._config.storage_path + self._last_filename)
+                        cs.store_cloud_image(cloud_storage_file_path)
                     self._last_filename = None
                     self._video_writer.release()
                     self.logger.debug("Leaving _video_writer()")
