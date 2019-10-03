@@ -4,6 +4,7 @@ import threading
 import time
 import uuid
 import queue
+import cloudstorage
 
 
 class VideoRecorder2:
@@ -116,6 +117,9 @@ class VideoRecorder2:
         current_filename = self._current_filename
         self._current_filename = None
         self._video_recorder_save = False
+        if self._config.enable_azure:
+            cs = cloudstorage.CloudStorage(self._config)
+            cs.store_cloud_image(self._current_video_filename)
         self.logger.debug("Leaving stop_recording()")
         return current_filename
 
