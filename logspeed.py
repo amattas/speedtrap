@@ -35,6 +35,5 @@ class LogSpeed:
             elif self._current_max >= self._config.log_threshold:
                 self.logger.debug("Logging maximum speed")
                 self._data_recorder.record(self._current_max, time.localtime())
-                return
             self._current_max = 0
         self.logger.debug("Entering log_speed()")
