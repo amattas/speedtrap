@@ -59,7 +59,7 @@ class VideoRecorder2:
                 ret, frame = video_capture.read()
                 if ret:
                     self.logger.debug("Getting video frame and adding to queue")
-                    self._video_queue.put((self._current_filename, frame))
+                    self._video_queue.put((self._current_filename, frame, self._speed, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())))
                     self.logger.debug("Video queue size roughly %s", self._video_queue.qsize())
         self.logger.debug("Leaving _video_reader()")
 
@@ -90,7 +90,7 @@ class VideoRecorder2:
                         self._video_writer = cv2.VideoWriter(self._config.storage_path + self._last_filename,
                                                              self._video_codec, self._config.camera_framerate,
                                                              (self._config.camera_xresolution, self._config.camera_yresolution))
-                    _write_frame = self._video_overlay(_video_queue_record[1])
+                    _write_frame = self._video_overlay(_video_queue_record[1], _video_queue_record[2], _video_queue_record[3])
                     self.logger.debug('Shape of source frame is %s', _write_frame.shape)
                     self._video_writer.write(_write_frame)
                 except:
@@ -113,10 +113,9 @@ class VideoRecorder2:
                     break
 
 
-    def _video_overlay(self, img):
+    def _video_overlay(self, img, speed, recordedtime):
         self.logger.debug("Entering _video_overlay()")
-        overlay_text = '{0!s} mph     {1!s}'.format(self._speed,
-                                                    time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
+        overlay_text = '{0!s} mph     {1!s}'.format(speed, recordedtime)
         self.logger.debug("Video overlay text %s", overlay_text)
         font_face = cv2.FONT_HERSHEY_SIMPLEX
         font_scale = .8
