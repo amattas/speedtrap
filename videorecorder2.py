@@ -65,20 +65,23 @@ class VideoRecorder2:
 
     def _video_writer(self):
         self.logger.debug("Entering _video_writer()")
-        self._last_filename = 'unknown' + self._config.camera_file_extension
+        self._last_filename = None
         self._video_codec = cv2.VideoWriter_fourcc(*self._config.camera_fourcc_codec)
-        self._video_writer = cv2.VideoWriter(self._config.storage_path+self._last_filename, self._video_codec,
-                                             self._config.camera_framerate,
-                                             (self._config.camera_xresolution, self._config.camera_yresolution))
-        while self._video_recorder_enabled or not self._video_queue.empty():
-            self.logger.debug("Recorder Enabled: %s, Video queue empty: %s", self._video_recorder_enabled, self._video_queue.empty())
-            while not self._video_queue.empty():
-                self.logger.debug("Video queue empty: %s", self._video_queue.empty())
+        while self._video_recorder_enabled:
+            while self._video_recorder_save or not self._video_queue.empty():
+                self.logger.debug("Recorder Save Enabled: %s, Video queue empty: %s", self._video_recorder_save,
+                                  self._video_queue.empty())
                 try:
                     self.logger.debug("Attempting to pop video from from queue")
                     _video_queue_record = self._video_queue.get(False)
                     self._video_queue.task_done()
-                    if not self._last_filename == _video_queue_record[0]:
+                    if self._last_filename is None:
+                        self._last_filename = _video_queue_record[0]
+                        self._video_writer = cv2.VideoWriter(self._config.storage_path + self._last_filename,
+                                                             self._video_codec, self._config.camera_framerate,
+                                                             (self._config.camera_xresolution,
+                                                              self._config.camera_yresolution))
+                    elif not self._last_filename == _video_queue_record[0]:
                         self._last_filename = _video_queue_record[0]
                         self._video_writer.release()
                         self._video_writer = cv2.VideoWriter(self._config.storage_path + self._last_filename,
@@ -89,15 +92,17 @@ class VideoRecorder2:
                     self._video_writer.write(_write_frame)
                 except:
                     self.logger.debug("Video queue empty")
-                    self._write_queue_empty = True
+                    self.logger.debug("Completing video writing")
+                    self._video_writer.release()
+                    if self._config.enable_azure:
+                        cs = cloudstorage.CloudStorage(self._config)
+                        cs.store_cloud_image(self._config.storage_path + self._last_filename)
+                    self._last_filename = None
+                    self._video_writer.release()
+                    self.logger.debug("Leaving _video_writer()")
                     continue
             time.sleep(1)
-        self.logger.debug("Completing video writing")
-        self._video_writer.release()
-        if self._config.enable_azure:
-            cs = cloudstorage.CloudStorage(self._config)
-            cs.store_cloud_image(self._config.storage_path + self._last_filename)
-        self.logger.debug("Leaving _video_writer()")
+
 
     def _video_overlay(self, img):
         self.logger.debug("Entering _video_overlay()")
