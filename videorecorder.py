@@ -19,7 +19,7 @@ class VideoRecorder:
         self._speed = 0
         self._current_max = 0
         self._data_recorder = DataRecorder(config)
-        self.write_queue = queue.Queue()
+        self._write_queue = queue.Queue()
 
     def record_speed(self, speed):
         self.logger.debug("Entering record_speed()")
