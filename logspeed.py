@@ -16,22 +16,24 @@ class LogSpeed:
         self._data_recorder = DataRecorder(config)
         self._video_recorder.start_recorder()
         self._current_filename = None
+        self._current_record = False
 
     def log_speed(self, speed):
         self.logger.debug("Entering log_speed()")
         if self._current_max == 0 and speed == 0:
             pass
         elif speed >= self._config.log_threshold:
+            if self.current_record:
+                self._video_recorder.set_speed(speed)
             if speed > self._current_max:
                 self.logger.debug("Current maximum speed was %s now %s", self._current_max, speed)
                 self._current_max = speed
             if speed >= self._config.record_threshold:
                 self.logger.debug("Logging speed %s to video", speed)
-                if self._current_filename is None:
+                if not self._current_record:
+                    self._current_record = True
                     self._current_filename = self._video_recorder.start_recording(speed)
-                else:
-                    self._video_recorder.set_speed(speed)
-        elif speed < self._config.log_threshold-5:
+        elif speed < self._config.log_threshold-10:
             file_name = self._video_recorder.stop_recording()
             if self._current_max >= self._config.log_threshold:
                 self._data_recorder.record(self._current_max, time.localtime(), file_name)
