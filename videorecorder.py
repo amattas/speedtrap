@@ -110,7 +110,7 @@ class VideoRecorder:
                 self._video_overlay(frame)
                 self.logger.debug('Shape of source frame is %s', frame.shape)
                 self._video_writer.write(frame)
-            except queue.Empty:
+            except:
                 self.logger.debug("Video queue empty")
                 self._write_queue_empty = True
                 pass
