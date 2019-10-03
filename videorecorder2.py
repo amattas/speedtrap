@@ -81,6 +81,9 @@ class VideoRecorder2:
                 self._write_queue_empty = True
                 continue
         self._video_writer.release()
+        if self._config.enable_azure:
+            cs = cloudstorage.CloudStorage(self._config)
+            cs.store_cloud_image(self._config.storage_path + self._last_filename)
         self.logger.debug("Leaving _video_writer()")
 
     def _video_overlay(self, img):
@@ -117,11 +120,7 @@ class VideoRecorder2:
         current_filename = self._current_filename
         self._current_filename = None
         self._video_recorder_save = False
-        if self._config.enable_azure:
-            cs = cloudstorage.CloudStorage(self._config)
-            cs.store_cloud_image(current_filename)
         self.logger.debug("Leaving stop_recording()")
-        return current_filename
 
 
 
