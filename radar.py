@@ -55,6 +55,8 @@ class Radar:
     # sendSerialCommand: function for sending commands to the OPS-241A module
     def send_serial_command(self, command):
         self.logger.debug("Entering send_serial_command()")
+        self.logger.debug("Flushing input buffer")
+        self._serial_connection.flushInput()
         data_for_send_str = command
         data_for_send_bytes = str.encode(data_for_send_str)
         self.logger.debug("Sending command %s", command)
