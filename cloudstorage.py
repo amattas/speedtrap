@@ -1,5 +1,5 @@
 import logging
-import threading
+import multiprocessing
 import os
 import azure.common
 from azure.storage.blob import BlockBlobService
@@ -21,7 +21,7 @@ class CloudStorage:
             return
         elif self._config.enable_azure:
             self.logger.debug("Starting thread to store %s to AzureBlobStorage", filename)
-            self._cloud_storage_thread = threading.Thread(target=self._store_azure_blob, args=[filename])
+            self._cloud_storage_thread = multiprocessing.Process(target=self._store_azure_blob, args=(filename,))
             self._cloud_storage_thread.start()
         self.logger.debug("Leaving store_cloud_image()")
 

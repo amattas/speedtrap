@@ -37,20 +37,20 @@ class Radar:
         self._configure_serial_device()
 
     def _configure_serial_device(self):
-            self._serial_connection.flushInput()
-            self._serial_connection.flushOutput()
-            self.send_serial_command(self._config.radar_speed_output_units)
-            self.send_serial_command(self._config.radar_data_precision)
-            self.send_serial_command(self._config.radar_sampling_rate)
-            self.send_serial_command(self._config.radar_reported_minimum_speed)
-            self.send_serial_command(self._config.radar_speed_reported_maximum)
-            self.send_serial_command(self._config.radar_direction_control)
-            self.send_serial_command(self._config.radar_speed_report)
-            self.send_serial_command(self._config.radar_processing_light_activity)
-            self.send_serial_command(self._config.radar_json_mode)
-            self.send_serial_command(self._config.radar_processing_led_control)
-            self.send_serial_command(self._config.radar_blank_data_reporting)
-            self.send_serial_command(self._config.radar_transmit_power)
+        self._serial_connection.flushInput()
+        self._serial_connection.flushOutput()
+        self.send_serial_command(self._config.radar_speed_output_units)
+        self.send_serial_command(self._config.radar_data_precision)
+        self.send_serial_command(self._config.radar_sampling_rate)
+        self.send_serial_command(self._config.radar_reported_minimum_speed)
+        self.send_serial_command(self._config.radar_speed_reported_maximum)
+        self.send_serial_command(self._config.radar_direction_control)
+        self.send_serial_command(self._config.radar_speed_report)
+        self.send_serial_command(self._config.radar_processing_light_activity)
+        self.send_serial_command(self._config.radar_json_mode)
+        self.send_serial_command(self._config.radar_processing_led_control)
+        self.send_serial_command(self._config.radar_blank_data_reporting)
+        self.send_serial_command(self._config.radar_transmit_power)
 
     # sendSerialCommand: function for sending commands to the OPS-241A module
     def send_serial_command(self, command):
@@ -66,7 +66,7 @@ class Radar:
         while not ser_write_verify:
             data_rx_bytes = self._serial_connection.readline()
             data_rx_length = len(data_rx_bytes)
-            if (data_rx_length != 0):
+            if data_rx_length != 0:
                 data_rx_str = str(data_rx_bytes)
                 self.logger.debug("Radar buffer contained: %s", data_rx_str)
                 if data_rx_str.find(ser_message_start):
@@ -74,8 +74,8 @@ class Radar:
         self.logger.debug("Leaving send_serial_command()")
 
     def read_serial_buffer(self):
-        Ops241_rx_bytes = self._serial_connection.readline()
-        Ops241_rx_string = Ops241_rx_bytes.decode()
-        self.logger.debug("Radar buffer contained: %s", Ops241_rx_string)
-        return str(Ops241_rx_string)
+        ops_rx_bytes = self._serial_connection.readline()
+        ops_rx_string = ops_rx_bytes.decode()
+        self.logger.debug("Radar buffer contained: %s", ops_rx_string)
+        return str(ops_rx_string)
 

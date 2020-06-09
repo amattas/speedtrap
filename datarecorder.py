@@ -1,6 +1,6 @@
-import logging;
-import csv;
-import time;
+import logging
+import csv
+import time
 
 from odbcdatabase import ODBCDatabase
 

@@ -1,7 +1,4 @@
-import configparser
 import logging
-import time
-import threading
 import json
 import signal
 from localtools import LocalTools
@@ -24,7 +21,7 @@ def main():
     while execute_loop:
         try:
             current_report = radar.read_serial_buffer()
-            if (len(current_report) > 0):
+            if len(current_report) > 0:
                 try:
                     current_report_json = json.loads(current_report)
                     current_speed = abs(float(current_report_json['speed']))
@@ -37,15 +34,12 @@ def main():
         except KeyboardInterrupt:
             execute_loop = False
     logger.info("SpeedTrap Terminating")
-    while threading.active_count() > 1:
-        logger.info('Waiting for %s threads to terminate.', threading.active_count()-1)
-        time.sleep(1)
 
-def receiveSignal(signalNumber, frame):
-    if signalNumber == signal.SIGQUIT:
+def receive_signal(signal_number, frame):
+    if signal_number == signal.SIGQUIT:
         execute_loop = False
     return
 
 if __name__ == '__main__':
-    signal.signal(signal.SIGQUIT, receiveSignal)
+    signal.signal(signal.SIGQUIT, receive_signal)
     main()
