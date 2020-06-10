@@ -5,6 +5,7 @@ import azure.common
 from azure.storage.blob import BlockBlobService
 
 
+# Todo - comment class
 class CloudStorage:
 
     def __init__(self, config):

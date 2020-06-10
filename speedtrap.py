@@ -6,7 +6,7 @@ from capturevideo import CaptureVideo
 from recordvideo import RecordVideo
 from configuration import Configuration
 from radar import Radar
-from datarecorder import DataRecorder
+from scribe import Scribe
 from multiprocessing import Pipe, Process, Queue
 from speedrecord import SpeedRecord
 
@@ -39,7 +39,7 @@ def main():
     record_process = Process(target=record_video.record, args=(record_child, video_queue))
     record_process.start()
 
-    data_recorder = DataRecorder(config)
+    data_recorder = Scribe(config)
     data_parent, data_child = Pipe()
     data_process = Process(target=data_recorder.capture, args=(data_child, ))
     data_process.start()

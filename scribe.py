@@ -1,12 +1,13 @@
 import logging
 import csv
 import time
+from cloudstorage import CloudStorage
 from speedrecord import SpeedRecord
 
 from odbcdatabase import ODBCDatabase
 
 # ToDo: Document Class
-class DataRecorder:
+class Scribe:
     """
     The DataRecorder class is designed to take a SpeedRecord and create a log entry either locally or on cloud
     storage
@@ -29,14 +30,20 @@ class DataRecorder:
                         self.logger.debug("Received -1 termination message")
                         break
                 elif type(data_result) is SpeedRecord:
-                    self.record(data_result.get_speed(), data_result.get_time(), data_result.get_filename())
+                    self._save_record(data_result.get_speed(), data_result.get_time(), data_result.get_filename())
 
-    def record(self, speed, recorded_time, filename):
+    def _save_record(self, speed, recorded_time, filename):
         self.logger.debug("Entering record()")
         if self._config.enable_local_database:
             self._record_storage(speed, recorded_time, filename)
-        if self._config.enable_odbc:
+        if self._config.enable_azure:
+            cloud_storage = CloudStorage(self._config)
+            cloud_storage.store_cloud_image(filename)
+            if self._config.enable_odbc:
+                self._odbc_database.database_record(speed, recorded_time, self._config.azure_storage_uri_prefix + filename)
+        elif self._config.enable_odbc:
             self._odbc_database.database_record(speed, recorded_time, filename)
+
         self.logger.debug("Leaving record()")
 
     def _record_storage(self, speed, recorded_time, filename):
