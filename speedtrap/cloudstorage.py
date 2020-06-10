@@ -87,6 +87,7 @@ class CloudStorage:
                     self.logger.debug("Deleting local file %s", filename)
                     os.remove(self._config.storage_path + filename)
                     self.logger.info("File %s successfully deleted from local filesystem", filename)
+                    retry_counter = 6 # Stop retrying
                     break
             except azure.common.AzureException:
                 self.logger.warning("Upload to Azure Storage failed on attempt %s", retry_counter+1)
