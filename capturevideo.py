@@ -15,7 +15,6 @@ class CaptureVideo:
         self.logger = logging.getLogger('SpeedTrap.Capture')
         self.logger.debug("Creating CaptureVideo() instance")
         self._config = config
-        # self._current_filename = 'unknown' + self._config.camera_file_extension ToDo: Need File Name for File
 
     def capture(self, capture_child, capture_speed_child, video_queue):
         """
