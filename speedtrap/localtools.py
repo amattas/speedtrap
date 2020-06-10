@@ -24,7 +24,7 @@ class LocalTools:
         -----
         """
         self._config = config
-        logging.basicConfig(level=self._config.logging_level)
+        logging.basicConfig(filename=self._config.logging_path, level=self._config.logging_level)
         self.logger = logging.getLogger('SpeedTrap.LocalTools')
         self.logger.debug("Creating LocalTools() instance")
 

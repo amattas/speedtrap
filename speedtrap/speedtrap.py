@@ -18,7 +18,7 @@ def main():
                         help="load configuration file", required=True)
     config_filename = parser.parse_args().filename
     config = Configuration(config_filename)
-    logging.basicConfig(level=config.logging_level)
+    logging.basicConfig(filename=config.logging_path, level=config.logging_level)
     logger = logging.getLogger('SpeedTrap')
     logger.info("SpeedTrap Starting")
     logger.info("Configuration file successfully loaded")

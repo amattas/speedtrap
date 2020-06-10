@@ -30,7 +30,7 @@ class RecordVideo:
         -----
         """
         self._config = config
-        logging.basicConfig(level=self._config.logging_level)
+        logging.basicConfig(filename=self._config.logging_path, level=self._config.logging_level)
         self.logger = logging.getLogger('SpeedTrap.Record')
         self.logger.debug("Creating RecordVideo() instance")
         # Create FIFO Queue for storing video frames

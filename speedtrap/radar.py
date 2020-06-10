@@ -26,7 +26,7 @@ class Radar:
             device at instantiation time (this behavior may be changed in a future release)
         """
         self._config = config
-        logging.basicConfig(level=self._config.logging_level)
+        logging.basicConfig(filename=self._config.logging_path, level=self._config.logging_level)
         self.logger = logging.getLogger('SpeedTrap.Radar')
         self.logger.debug("Creating Radar() instance")
         self._config = config

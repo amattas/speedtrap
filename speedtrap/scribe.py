@@ -29,7 +29,7 @@ class Scribe:
         -----
         """
         self._config = config
-        logging.basicConfig(level=self._config.logging_level)
+        logging.basicConfig(filename=self._config.logging_path, level=self._config.logging_level)
         self.logger = logging.getLogger('SpeedTrap.Scribe')
         self.logger.debug("Creating Scribe() instance")
         self.logger.debug("Setting up ODBCDatabase() instance")

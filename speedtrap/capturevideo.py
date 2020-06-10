@@ -26,7 +26,7 @@ class CaptureVideo:
         -----
         """
         self._config = config
-        logging.basicConfig(level=self._config.logging_level)
+        logging.basicConfig(filename=self._config.logging_path, level=self._config.logging_level)
         self.logger = logging.getLogger('SpeedTrap.CaptureVideo')
         self.logger.info("Creating CaptureVideo() instance")
         self._config = config
