@@ -1,9 +1,9 @@
-#Speed Trap
+# Speed Trap
 
 This is a simple radar/camera speed trap that can be ran on a RaspberryPI, NVidia Jetson Nano, 
 or any other machine with with USB, enough memory, and processing power.
 
-##History 
+## History 
 In my neighborhood I live in a through street, and its an easy way to get two and from two local schools.
 Because of the cut through, our neighborhood has a lot of traffic the travels at a high rate of speed.
 
@@ -13,7 +13,7 @@ vehicles traveling more than double the speed limit. Although they cannot police
 they expressed their willingness to put special patrols in place if I could let them know the time
 of the offending vehicles, their license plate number, and estimated speed. Challenge accepted. 
 
-##Hardware
+## Hardware
 Your hardware list may vary, but this is what I built my device with:
  * [NVidia Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit)
  * [Mini USB Camera Module Board](https://www.amazon.com/gp/product/B07MFTDHLH/ref=ppx_yo_dt_b_asin_title_o08_s00?ie=UTF8&psc=1)
@@ -27,7 +27,7 @@ Your hardware list may vary, but this is what I built my device with:
  * Plexiglass
  * USB Cables
 
-##Cloud
+## Cloud
 There is the option to store your data files to cloud storage, right now this only supports Azure
 because for my day job I work for Microsoft and it's who I have chosen to support. With that said,
 it would be really easy to copy the cloudstorage.py source code file and stub it out for the provider 
@@ -35,7 +35,7 @@ of your choice. You can also store to cloud databases, for this I have opted to 
 I developed the software on a Mac, and the out of the box available database drivers are different 
 than what is available on arm64.
 
-##Known Issues
+## Known Issues
 There are a couple known issues with the current build:
  * This readme file doesn't have near enough detail yet
  * Like any radar based product this is still affected by doppler shit (cosine effect), while 
