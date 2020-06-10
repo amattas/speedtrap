@@ -1,10 +1,9 @@
 import logging
 import csv
 import time
-from speedtrap.cloudstorage import CloudStorage
-from speedtrap.speedrecord import SpeedRecord
-
-from speedtrap.odbcdatabase import ODBCDatabase
+from cloudstorage import CloudStorage
+from speedrecord import SpeedRecord
+from odbcdatabase import ODBCDatabase
 
 # ToDo: Document Class
 class Scribe:

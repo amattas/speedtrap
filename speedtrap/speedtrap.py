@@ -1,18 +1,23 @@
 import logging
 import json
 import signal
-from speedtrap.localtools import LocalTools
-from speedtrap.capturevideo import CaptureVideo
-from speedtrap.recordvideo import RecordVideo
-from speedtrap.configuration import Configuration
-from speedtrap.radar import Radar
-from speedtrap.scribe import Scribe
+import argparse
+from localtools import LocalTools
+from capturevideo import CaptureVideo
+from recordvideo import RecordVideo
+from configuration import Configuration
+from radar import Radar
+from scribe import Scribe
 from multiprocessing import Pipe, Process, Queue
-from speedtrap.speedrecord import SpeedRecord
+from speedrecord import SpeedRecord
 
 
 def main():
-    config = Configuration("../config/config.ini")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c","--config", dest="filename",
+                        help="load configuration file", required=True)
+    config_filename = parser.parse_args().filename
+    config = Configuration(config_filename)
     logging.basicConfig(level=config.logging_level)
     logger = logging.getLogger('SpeedTrap')
     logger.info("SpeedTrap Starting")
