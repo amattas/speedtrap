@@ -6,7 +6,8 @@ class Configuration:
     """
     This class is a helper class used to manage the configuration of the speedtrap. It reads an INI style configuration
     file and loads the values into this class to be consumed during execution. All of the work happens during the
-    initialization of the class.
+    initialization of the class. The default logger isn't include in this class as it typically gets instantiated before
+    the logger exists, and it needs to be serialized.
     """
 
     def __init__(self, config_filename):

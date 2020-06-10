@@ -1,7 +1,9 @@
 class SpeedRecord:
     """
     The SpeedRecord class is used to pass around metadata around a speed event so it can be logged and uploaded
-    to a cloud service
+    to a cloud service. Logging is not used in this class because the Python logger creates a lock and prevents
+    the class from being serialized successfully with pickle. Since these objects are passed between
+    multiprocessing.Pipes() serialization is required.
     """
 
     def __init__(self, time, filename, speed):
