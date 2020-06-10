@@ -3,7 +3,8 @@ import cv2
 import queue
 import time
 
-class Record:
+
+class RecordVideo:
     """
     The Record class contains the methods needed to convert camera frames stored on the multiprocessing.Queue()
     to video files using cv2 module. Using the record() function, it is designed to add the overlays to the images
@@ -83,6 +84,7 @@ class Record:
                 self.logger.debug("Completing video writing")
                 video_writer.release()
                 # ToDo: Add code to save to cloud
+                # ToDo: Store Pipe() return record in a class
                 mode = 0
                 record_mode_child.send((self._config.storage_path + filename, max_speed))
                 max_speed = 0

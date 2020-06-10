@@ -2,7 +2,7 @@ import logging
 import cv2
 import time
 
-class Capture:
+class CaptureVideo:
     """
     The Capture class contains the methods needed to read images frames off of a connected web cam
     using cv2 module. Using the capture() method, it is designed to store the images into a shared

@@ -2,8 +2,8 @@ import logging
 import json
 import signal
 from localtools import LocalTools
-from capture import Capture
-from record import Record
+from capturevideo import CaptureVideo
+from recordvideo import RecordVideo
 from configuration import Configuration
 from radar import Radar
 from multiprocessing import Pipe, Process, Queue
@@ -29,8 +29,8 @@ def main():
     capture_speed_parent, capture_speed_child = Pipe()   # Signaling to Camera Process
     record_parent, record_mode_child = Pipe()  # Signaling to Record Process
 
-    capture = Capture(config)
-    record = Record(config)
+    capture = CaptureVideo(config)
+    record = RecordVideo(config)
 
     capture_process = Process(target=capture.capture, args=(capture_mode_child, capture_speed_child,
                                                             video_queue))
