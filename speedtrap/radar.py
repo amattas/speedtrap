@@ -3,8 +3,28 @@ import logging
 import time
 
 class Radar:
+    """
+    This is a helper class used to interface with the Omnipresense radar devices. To date it has only been used with
+    the OPS243-A model, but many of the models are similar and this likely will work fine with other variations that
+    have doppler capabilities.
+    """
 
     def __init__(self, config):
+        """
+        This is the constructor used for class initialization
+
+        Parameters
+        ----------
+        config : Configuration
+            This is a populated instances of the Configuration class with all of the settings loaded fom the specified
+            configuration file
+
+        Returns
+        ------
+        Radar:
+            Returns a Radar instance initialized with the provided Configuration. A Serial connection is made to the
+            device at instantiation time (this behavior may be changed in a future release)
+        """
         self._config = config
         logging.basicConfig(level=self._config.logging_level)
         self.logger = logging.getLogger('SpeedTrap.Radar')
@@ -37,6 +57,12 @@ class Radar:
         self._configure_serial_device()
 
     def _configure_serial_device(self):
+        """
+        This private method sends all of the device setup parameters required to properly record. Each configuration
+        parameter is a two character string. Details of the parameters can be found in document AN-010 from
+        Omnipresense (at the time of writing the most recent location is here:
+        https://omnipresense.com/wp-content/uploads/2019/10/AN-010-Q_API_Interface.pdf)
+        """
         self._serial_connection.flushInput()
         self._serial_connection.flushOutput()
         self.send_serial_command(self._config.radar_speed_output_units)
@@ -52,8 +78,15 @@ class Radar:
         self.send_serial_command(self._config.radar_blank_data_reporting)
         self.send_serial_command(self._config.radar_transmit_power)
 
-    # sendSerialCommand: function for sending commands to the OPS-241A module
     def send_serial_command(self, command):
+        """
+        This method takes a text string and sends it over the serial connection to the radar device.
+
+        Parameters
+        ----------
+        command : str
+            This is command string being sent to the radar device.
+        """
         self.logger.debug("Entering send_serial_command()")
         self.logger.debug("Flushing input buffer")
         self._serial_connection.flushInput()
@@ -76,6 +109,14 @@ class Radar:
         self.logger.debug("Leaving send_serial_command()")
 
     def read_serial_buffer(self):
+        """
+        This method reads the current serial buffer from the radar device.
+
+        Returns
+        -------
+        String:
+            This is the string of text on the serial buffer for the radar device
+        """
         ops_rx_bytes = self._serial_connection.readline()
         ops_rx_string = ops_rx_bytes.decode()
         self.logger.debug("Radar buffer contained: %s", ops_rx_string)
