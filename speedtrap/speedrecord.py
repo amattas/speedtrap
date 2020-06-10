@@ -64,4 +64,3 @@ class SpeedRecord:
         -----
         """
         return self._speed
-
