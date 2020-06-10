@@ -30,7 +30,7 @@ class Configuration:
 
         # Load Default Configuration Section
         self.record_threshold = int(self._config_parser['DEFAULT']['RecordThreshold'])
-        self.clear_local_on_start = self._config_parser.getboolean('DEFAULT','ClearLocalOnStart')
+        self.clear_local_on_start = self._config_parser.getboolean('DEFAULT', 'ClearLocalOnStart')
         self.logging_path = self._config_parser['DEFAULT']['LogPath']
         if self._config_parser['DEFAULT']['LogLevel'] == 'DEBUG':
             self.logging_level = logging.DEBUG
@@ -40,7 +40,7 @@ class Configuration:
             self.logging_level = logging.WARN
 
         # Load Database Configuration Section
-        self.enable_local_database = self._config_parser.getboolean('DATABASE','EnableLocalDatabase')
+        self.enable_local_database = self._config_parser.getboolean('DATABASE', 'EnableLocalDatabase')
         self.database_path = self._config_parser['DATABASE']['DatabasePath']
         self.database_filename = self._config_parser['DATABASE']['DatabaseFilename']
         self.enable_odbc = self._config_parser.getboolean('DATABASE', 'EnableODBC')
@@ -49,14 +49,16 @@ class Configuration:
 
         # ToDo: Make configurations true or false
         # Load Storage Configuration Section
-        self.enable_azure = self._config_parser.getboolean('STORAGE','EnableAzure')
+        self.enable_azure = self._config_parser.getboolean('STORAGE', 'EnableAzure')
         self.storage_path = self._config_parser['STORAGE']['StoragePath']
         if self.enable_azure:
             self.azure_storage_account = self._config_parser['STORAGE']['StorageAzureStorageAccountName']
             self.azure_storage_container = self._config_parser['STORAGE']['StorageAzureStorageContainer']
             self.azure_storage_key = self._config_parser['STORAGE']['StorageAzureStorageKey']
-            self.azure_storage_uri_prefix = "https://{0!s}.blob.core.windows.net/{1!s}/".format(self.azure_storage_account, self.azure_storage_container)
-            self.storage_delete_on_upload = self._config_parser.getboolean('STORAGE','StorageDeleteOnUpload')
+            self.azure_storage_uri_prefix = \
+                "https://{0!s}.blob.core.windows.net/{1!s}/".format(self.azure_storage_account,
+                                                                    self.azure_storage_container)
+            self.storage_delete_on_upload = self._config_parser.getboolean('STORAGE', 'StorageDeleteOnUpload')
 
         self.camera_ringbuffersize = int(self._config_parser['CAMERA']['RingBufferSize'])
         self.camera_xresolution = int(self._config_parser['CAMERA']['XResolution'])
