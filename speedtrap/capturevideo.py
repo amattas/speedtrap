@@ -3,6 +3,7 @@ import cv2
 from datetime import datetime
 import time
 
+
 class CaptureVideo:
     """
     The Capture class contains the methods needed to read images frames off of a connected web cam
