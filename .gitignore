@@ -12,5 +12,5 @@ __pycache__/*
 .DS_Store
 .idea
 *.avi
-config.ini
+config/config.ini
 *.csv

@@ -2,7 +2,7 @@ import logging
 import cv2
 import queue
 import time
-from speedrecord import SpeedRecord
+from speedtrap.speedrecord import SpeedRecord
 
 
 class RecordVideo:
