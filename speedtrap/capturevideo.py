@@ -80,7 +80,11 @@ class CaptureVideo:
             # ToDo: Set buffer ring max size as a configuration value
             if mode == 0:
                 while video_queue.qsize() > self._config.camera_ringbuffersize:
-                    self.logger.debug("Draining ring buffer size is now roughly %s", video_queue.qsize())
-                    video_queue.get(False)
+                    try:
+                        self.logger.debug("Draining ring buffer size is now roughly %s", video_queue.qsize())
+                        video_queue.get(False)
+                    except video_queue.Empty:
+                        self.logger.debug("Video queue is empty, breaking from loop")
+                        break
         self.logger.debug("Leaving capture()")
         return
