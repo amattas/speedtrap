@@ -34,6 +34,7 @@ class Radar:
         #Handle busy serial port
         for _retry in range(5):
             try:
+                self.logger.debug("Attempting to open Serial connection")
                 self._serial_connection = serial.Serial(
                     port=self._config.radar_device_path,
                     baudrate=9600,
@@ -45,15 +46,13 @@ class Radar:
                 )
                 break
             except:
-                if _retry < 5:
-                    self.logger.debug("Serial port busy, connection attempt #%s, retrying in 3 seconds", _retry)
+                if _retry < 10:
+                    self.logger.info("Serial port busy, connection attempt #%s, retrying in 3 seconds", _retry)
                     time.sleep(3)
                     pass
                 else:
-                    self.logger.debug("Serial port busy, connection attempt #%s, failed", _retry)
+                    self.logger.warn("Serial port busy, connection attempt #%s, failed", _retry)
                     raise
-
-
         self._configure_serial_device()
 
     def _configure_serial_device(self):
@@ -63,6 +62,7 @@ class Radar:
         Omnipresense (at the time of writing the most recent location is here:
         https://omnipresense.com/wp-content/uploads/2019/10/AN-010-Q_API_Interface.pdf)
         """
+        self.logger.debug("Entering _configure_serial_device()")
         self._serial_connection.flushInput()
         self._serial_connection.flushOutput()
         self.send_serial_command(self._config.radar_speed_output_units)
@@ -77,6 +77,7 @@ class Radar:
         self.send_serial_command(self._config.radar_processing_led_control)
         self.send_serial_command(self._config.radar_blank_data_reporting)
         self.send_serial_command(self._config.radar_transmit_power)
+        self.logger.debug("Leaving _configure_serial_device()")
 
     def send_serial_command(self, command):
         """
@@ -98,6 +99,7 @@ class Radar:
         ser_message_start = '{'
         ser_write_verify = False
         # Print out module response to command string
+        self.logger.debug("Verifying response")
         while not ser_write_verify:
             data_rx_bytes = self._serial_connection.readline()
             data_rx_length = len(data_rx_bytes)
@@ -117,8 +119,10 @@ class Radar:
         String:
             This is the string of text on the serial buffer for the radar device
         """
+        self.logger.debug("Entering read_serial_buffer()")
         ops_rx_bytes = self._serial_connection.readline()
         ops_rx_string = ops_rx_bytes.decode()
         self.logger.debug("Radar buffer contained: %s", ops_rx_string)
+        self.logger.debug("Leaving read_serial_buffer()")
         return str(ops_rx_string)
 
