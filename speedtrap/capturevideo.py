@@ -59,16 +59,18 @@ class CaptureVideo:
         self.logger.debug("Entering capture()")
         time.sleep(1)
         mode = 0
-        speed = 0.
+        speed = 0.  # Period is important to prevent rounding
+        self.logger.debug("Instantiating opencv2 video capture")
         video_capture = cv2.VideoCapture(0)
         video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, self._config.camera_xresolution)
         video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self._config.camera_yresolution)
         while mode != -1:
             if capture_child.poll():
-                self.logger.debug("Message receive on capture_child Pipe()")
+                self.logger.debug("Message received on capture_child Pipe()")
                 mode = capture_child.recv()
+                self.logger.debug("Mode now set to %s", mode)
             if capture_speed_child.poll():
-                self.logger.debug("Message receive on capture_speed_child Pipe()")
+                self.logger.debug("Message received on capture_speed_child Pipe()")
                 speed = capture_speed_child.recv()
             ret, frame = video_capture.read()
             if ret:
