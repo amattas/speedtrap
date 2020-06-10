@@ -5,7 +5,6 @@ from localtools import LocalTools
 from capture import Capture
 from record import Record
 from configuration import Configuration
-from logspeed import LogSpeed
 from radar import Radar
 from multiprocessing import Pipe, Process, Queue
 
