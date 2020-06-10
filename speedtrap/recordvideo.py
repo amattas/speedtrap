@@ -32,9 +32,10 @@ class RecordVideo:
         self._config = config
         logging.basicConfig(level=self._config.logging_level)
         self.logger = logging.getLogger('SpeedTrap.Record')
-        self.logger.debug("Creating Capture() instance")
+        self.logger.debug("Creating RecordVideo() instance")
         # Create FIFO Queue for storing video frames
         self._current_filename = 'unknown' + self._config.camera_file_extension
+        self.logger.debug("Setting video codec to %s", self._config.camera_fourcc_codec)
         self._video_codec = cv2.VideoWriter_fourcc(*self._config.camera_fourcc_codec)
 
     def record(self, record_child, video_queue):
@@ -67,13 +68,14 @@ class RecordVideo:
         # Exit on -1
         while mode != -1:
             if record_child.poll():
+                self.logger.debug("Message received on record_child Pipe()")
                 mode = record_child.recv()
+                self.logger.debug("Mode now set to %s", mode)
             # Record on 1
             if mode == 1:
                 if filename is None:
                     filename = str(int(time.time())) + self._config.camera_file_extension
                 self.logger.debug("Filename set to: %s", filename)
-                self.logger.debug("Video queue is empty: %s", video_queue.empty())
                 self.logger.debug("Creating video_writer")
                 video_writer = cv2.VideoWriter(self._config.storage_path + filename,
                                                self._video_codec, self._config.camera_framerate,
@@ -93,14 +95,16 @@ class RecordVideo:
                             max_speed = queue_record[1]
                         # If Max Speed is 0, then nothing has been written yet
                         if queue_record[1] == 0 and max_speed != 0:
-                            self.logger.debug("No movement detected, breaking from loop")
+                            self.logger.debug("Speed on frame is 0, breaking from loop")
                             break
                     except queue.Empty:
                         self.logger.debug("Video queue is empty, breaking from loop")
                         break
                 self.logger.debug("Completing video writing")
                 video_writer.release()
+                self.logger.debug("Creating speed record instance")
                 speed_record = SpeedRecord(time.localtime(), filename, max_speed)
+                self.logger.debug("Sending speed record to record_child Pipe()")
                 record_child.send(speed_record)
                 # Reset variables for the next record.
                 max_speed = 0
@@ -108,7 +112,6 @@ class RecordVideo:
                 filename = None
             if mode == 0:
                 time.sleep(.01)
-
         self.logger.debug("Leaving recorder()")
 
     def _overlay(self, frame, speed, recorded_time):
@@ -141,6 +144,7 @@ class RecordVideo:
         color = (0, 0, 255)
         # text_size = cv2.getTextSize(overlay_text,font_face, font_scale, font_thickness)
         # ToDo: Need to fix alignment of text
+        self.logger.debug("Creating composite image")
         new_image = cv2.putText(frame, overlay_text, (20, self._config.camera_yresolution - 20), font_face,
                                 font_scale, color,
                                 font_thickness, cv2.LINE_AA)
