@@ -31,7 +31,6 @@ class Configuration:
         # Load Default Configuration Section
         self.record_threshold = int(self._config_parser['DEFAULT']['RecordThreshold'])
         self.clear_local_on_start = self._config_parser.getboolean('DEFAULT','ClearLocalOnStart')
-        self.enable_azure = self._config_parser.getboolean('DEFAULT','EnableAzure')
         if self._config_parser['DEFAULT']['LogLevel'] == 'DEBUG':
             self.logging_level = logging.DEBUG
         elif self._config_parser['DEFAULT']['LogLevel'] == 'INFO':
@@ -49,6 +48,7 @@ class Configuration:
 
         # ToDo: Make configurations true or false
         # Load Storage Configuration Section
+        self.enable_azure = self._config_parser.getboolean('STORAGE','EnableAzure')
         self.storage_path = self._config_parser['STORAGE']['StoragePath']
         if self.enable_azure:
             self.azure_storage_account = self._config_parser['STORAGE']['StorageAzureStorageAccountName']
@@ -57,6 +57,7 @@ class Configuration:
             self.azure_storage_uri_prefix = "https://{0!s}.blob.core.windows.net/{1!s}/".format(self.azure_storage_account, self.azure_storage_container)
             self.storage_delete_on_upload = self._config_parser.getboolean('STORAGE','StorageDeleteOnUpload')
 
+        self.camera_ringbuffersize = int(self._config_parser['CAMERA']['RingBufferSize'])
         self.camera_xresolution = int(self._config_parser['CAMERA']['XResolution'])
         self.camera_yresolution = int(self._config_parser['CAMERA']['YResolution'])
         self.camera_framerate = int(self._config_parser['CAMERA']['FrameRate'])
