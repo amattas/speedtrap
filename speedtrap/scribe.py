@@ -108,7 +108,7 @@ class Scribe:
         self.logger.debug("Entering _record_storage()")
         record = [(speed, '{:%Y-%m-%d %H:%M:%S}'.format(recorded_time), filename)]
         csv_filename = self._config.database_path + self._config.database_filename
-        csv_file = open(csv_filename,'a')
+        csv_file = open(csv_filename, 'a')
         csv_writer = csv.writer(csv_file, dialect='excel')
         csv_writer.writerows(record)
         self.logger.info("Successfully saved %s to local storage", filename)
