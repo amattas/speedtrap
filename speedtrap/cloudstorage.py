@@ -14,6 +14,21 @@ class CloudStorage:
     """
 
     def __init__(self, config):
+        """
+        This is the constructor used for class initialization
+
+        Parameters
+        ----------
+        config : Configuration
+            This is a populated instances of the Configuration class with all of the settings loaded fom the specified
+            configuration file
+
+        Returns
+        ------
+        CloudStorage:
+            Returns a CloudStorage instance initialized with the provided Configuration.
+        -----
+        """
         self._config = config
         logging.basicConfig(level=self._config.logging_level)
         self.logger = logging.getLogger('SpeedTrap.CloudStorage')
