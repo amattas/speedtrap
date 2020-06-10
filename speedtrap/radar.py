@@ -2,6 +2,7 @@ import serial
 import logging
 import time
 
+
 class Radar:
     """
     This is a helper class used to interface with the Omnipresense radar devices. To date it has only been used with
@@ -31,7 +32,7 @@ class Radar:
         self.logger.debug("Creating Radar() instance")
         self._config = config
         self._serial_connection = None
-        #Handle busy serial port
+        # Handle busy serial port
         for _retry in range(5):
             try:
                 self.logger.debug("Attempting to open Serial connection")
@@ -51,7 +52,7 @@ class Radar:
                     time.sleep(3)
                     pass
                 else:
-                    self.logger.warn("Serial port busy, connection attempt #%s, failed", _retry)
+                    self.logger.warning("Serial port busy, connection attempt #%s, failed", _retry)
                     raise
         self._configure_serial_device()
 
@@ -125,4 +126,3 @@ class Radar:
         self.logger.debug("Radar buffer contained: %s", ops_rx_string)
         self.logger.debug("Leaving read_serial_buffer()")
         return str(ops_rx_string)
-
