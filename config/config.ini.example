@@ -1,38 +1,42 @@
 [DEFAULT]
-LogThreshold=20
-RecordThreshold=25
+RecordThreshold=1
 ClearLocalOnStart=1
-#Enables cloud storage and cloud database
-EnableAzure=1
-LogLevel=INFO
+LogLevel=DEBUG
+LogPath=../speedtrap.log
+
 
 [DATABASE]
 # Right now the only option that works here is AzureSQLDB or LocalOnly
 EnableLocalDatabase=1
-DatabasePath=./
+DatabasePath=../
 DatabaseFilename=log.csv
 
+# Configuration
 EnableODBC=1
-DatabaseConnectionString=DRIVER={FreeTDS};SERVER=<servername>t;PORT=1433;DATABASE=<databasename>;UID=<username>;PWD=<password>;TDS_Version=7.3;
-DatabaseDriver={FreeTDS}
+DatabaseConnectionString=DRIVER={FreeTDS};SERVER=<INSERT SERVER NAME>;PORT=1433;DATABASE=<INSERT DATABASE NAME>;UID=<INSERT USERNAME>;PWD=<INSERT PASSWORD>;TDS_Version=7.3;
+
 
 [STORAGE]
-StoragePath=./
+# Enables cloud storage and cloud database
+EnableAzure=1
+StoragePath=../
 
 # Configuration for Azure Storage Blobs
-StorageAzureStorageAccountName=<accountname>
-StorageAzureStorageContainer=<container>
-StorageAzureStorageKey=<credential>
+StorageAzureStorageAccountName=<INSERT STORAGE ACCOUNT NAME>
+StorageAzureStorageContainer=<INSERT STORAGE CONTAINER NAME>
+StorageAzureStorageKey=<INSERT STORAGE KEY>
 
 # Delete from local drive after successful upload to the cloud
 StorageDeleteOnUpload=1
 
 
 [CAMERA]
+# How many frames to store to prepend the recording with
+RingBufferSize=50
 # Resolution must be supported by your camera or execution will fail
 XResolution=640
 YResolution=480
-FrameRate=20
+FrameRate=30
 # Video codec must be available on system, list of codecs at https://www.fourcc.org/codecs.php
 FourCCVideoCodec=MJPG
 # File extension must be compatible with video codec
@@ -40,7 +44,7 @@ FileExtension=.avi
 
 
 [RADAR]
-DevicePath=/dev/tty.usbmodem143101
+DevicePath=/dev/ttyACM0
 SpeedOutputUnits=US
 DataPrecision=F2
 SamplingRate=S2
@@ -49,4 +53,8 @@ SpeedReport=OS
 ProcessingLightActivity=Oc
 LedControl=OL
 BlankDataReporting=BZ
-TransmitPower=P7
+TransmitPower=P0
+
+
+
+
