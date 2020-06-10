@@ -7,6 +7,7 @@ from recordvideo import RecordVideo
 from configuration import Configuration
 from radar import Radar
 from multiprocessing import Pipe, Process, Queue
+from speedrecord import SpeedRecord
 
 
 def main():
@@ -46,11 +47,11 @@ def main():
         try:
             if record_parent.poll():
                 record_result = record_parent.recv()
-                # ToDo We aren't recording anymore, so lets log
-                # Change the behavior of the capture process back to its default. The recording process already changed
-                # itself
-                recording = False
-                capture_parent.send(0)
+                if type(record_result) is SpeedRecord:
+                    # ToDo We aren't recording anymore, so lets log
+                    # Change the behavior of the capture process back to its default.
+                    recording = False
+                    capture_parent.send(0)
             current_report = radar.read_serial_buffer()
             if len(current_report) > 0:
                 try:

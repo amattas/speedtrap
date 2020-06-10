@@ -13,7 +13,7 @@ class CaptureVideo:
         self._config = config
         logging.basicConfig(level=self._config.logging_level)
         self.logger = logging.getLogger('SpeedTrap.Capture')
-        self.logger.debug("Creating Capture() instance")
+        self.logger.debug("Creating CaptureVideo() instance")
         self._config = config
         # self._current_filename = 'unknown' + self._config.camera_file_extension ToDo: Need File Name for File
 
@@ -57,11 +57,12 @@ class CaptureVideo:
             ret, frame = video_capture.read()
             if ret:
                 self.logger.debug("Getting video frame and adding to queue")
-                video_queue.put((frame, speed, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())))
+                video_queue.put((frame, speed, time.localtime()))
                 self.logger.debug("Video queue size roughly %s", video_queue.qsize())
-                self.logger.debug("Leaving _video_reader()")
             # ToDo: Set buffer ring max size as a configuration value
             if mode == 0:
                 while video_queue.qsize() > 50:
+                    self.logger.debug("Draining ring buffer size roughly %s", video_queue.qsize())
                     video_queue.get(False)
+        self.logger.debug("Leaving capture()")
         return

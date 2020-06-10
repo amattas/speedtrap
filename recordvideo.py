@@ -2,6 +2,7 @@ import logging
 import cv2
 import queue
 import time
+from speedrecord import SpeedRecord
 
 
 class RecordVideo:
@@ -84,9 +85,9 @@ class RecordVideo:
                 self.logger.debug("Completing video writing")
                 video_writer.release()
                 # ToDo: Add code to save to cloud
-                # ToDo: Store Pipe() return record in a class
                 mode = 0
-                record_mode_child.send((self._config.storage_path + filename, max_speed))
+                speed_record = SpeedRecord(time.localtime(), filename, max_speed)
+                record_mode_child.send(speed_record)
                 max_speed = 0
             if mode == 0:
                 time.sleep(.01)
@@ -115,7 +116,7 @@ class RecordVideo:
             Returns an image with the parameter text overlaid
         """
         self.logger.debug("Entering _overlay()")
-        overlay_text = '{0!s} mph     {1!s}'.format(speed, recorded_time)
+        overlay_text = '{0!s} mph     {1!s}'.format(speed, time.strftime('%Y-%m-%d %H:%M:%S', recorded_time))
         self.logger.debug("Video overlay text %s", overlay_text)
         font_face = cv2.FONT_HERSHEY_SIMPLEX
         font_scale = .8
