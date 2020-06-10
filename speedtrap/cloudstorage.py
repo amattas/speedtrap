@@ -7,6 +7,11 @@ from azure.storage.blob import BlockBlobService
 
 # Todo - comment class
 class CloudStorage:
+    """
+    This class is a helper class used to upload an image file to a cloud storage account. Currently it only supports
+    Azure, but others could be easily added if required by other users of the platform. The upload occures in its
+    own process to ensure we aren't blocking any of the other activity happening.
+    """
 
     def __init__(self, config):
         self._config = config
@@ -16,6 +21,17 @@ class CloudStorage:
         self._cloud_storage_thread = None
 
     def store_cloud_image(self, filename):
+        """
+        Stores a filename to cloud storage. The configuration used when instantiating the class will be used to
+        determine what type of cloud storage to store the file into, and whether to delete the local file or not.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file to be uploaded, it will automatically be appended with the file storage path form the
+            configuration file.
+        -----
+        """
         self.logger.debug("Entering store_cloud_image()")
         if not self._config.enable_azure:
             self.logger.info("Unable to save %s to cloud, configured for local storage only", filename)
@@ -27,6 +43,18 @@ class CloudStorage:
         self.logger.debug("Leaving store_cloud_image()")
 
     def _store_azure_blob(self, filename):
+        """
+        Stores a filename to an Azure blob storage account. The configuration used when instantiating the class
+        will be used to determine where the Azure storage account information, and whether or not to remove the file
+        from local storage after a successful upload. It will attempt the upload 5 times before failing.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file to be uploaded, it will automatically be appended with the file storage path form the
+            configuration file.
+        -----
+        """
         for retry_counter in range(5):
             try:
                 self.logger.debug("Entering _store_azure_blob()")
