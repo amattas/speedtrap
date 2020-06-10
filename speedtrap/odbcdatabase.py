@@ -54,7 +54,7 @@ class ODBCDatabase:
             self.logger.info("Unable to save record to cloud, azure is not enabled")
             return
         elif self._config.enable_azure:
-            self.logger.debug("Storing record to database")
+            self.logger.debug("Starting thread to record database record")
             self._cloud_storage_thread = multiprocessing.Process(target=self._database_record, args=(speed, recorded_time, file_uri))
             self._cloud_storage_thread.start()
         self.logger.debug("Leaving database_record()")
@@ -76,11 +76,12 @@ class ODBCDatabase:
         -----
         """
         self.logger.debug("Entering _database_record()")
-        self.logger.debug("Leaving _database_record()")
         database_connection = pyodbc.connect(self._config.database_connection_string)
         database_cursor = database_connection.cursor()
         database_query = ("INSERT INTO dbo.speedtrap (DateRecorded, SpeedRecorded, VideoUri) VALUES (?, ?, ?)")
         database_parameters = (time.strftime('%Y-%m-%d %H:%M:%S', recorded_time), speed, file_uri)
         database_cursor.execute(database_query, database_parameters)
         database_cursor.commit()
+        self.logger.debug("Database record written successfully")
         database_cursor.close()
+        self.logger.debug("Leaving _database_record()")
