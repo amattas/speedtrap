@@ -1,7 +1,7 @@
 import logging
 import multiprocessing
 import pyodbc
-import time
+from datetime import datetime
 
 
 class ODBCDatabase:
@@ -79,7 +79,7 @@ class ODBCDatabase:
         database_connection = pyodbc.connect(self._config.database_connection_string)
         database_cursor = database_connection.cursor()
         database_query = ("INSERT INTO dbo.speedtrap (DateRecorded, SpeedRecorded, VideoUri) VALUES (?, ?, ?)")
-        database_parameters = (time.strftime('%Y-%m-%d %H:%M:%S', recorded_time), speed, file_uri)
+        database_parameters = ('{:%Y-%m-%d %H:%M:%S}'.format(recorded_time), speed, file_uri)
         database_cursor.execute(database_query, database_parameters)
         database_cursor.commit()
         self.logger.debug("Database record written successfully")

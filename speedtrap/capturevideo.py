@@ -1,5 +1,6 @@
 import logging
 import cv2
+from datetime import datetime
 import time
 
 class CaptureVideo:
@@ -75,7 +76,7 @@ class CaptureVideo:
             ret, frame = video_capture.read()
             if ret:
                 self.logger.debug("Getting video frame and adding to queue")
-                video_queue.put((frame, speed, time.localtime()))
+                video_queue.put((frame, speed, datetime.today()))
                 self.logger.debug("Video queue size is now roughly %s", video_queue.qsize())
             # ToDo: Set buffer ring max size as a configuration value
             if mode == 0:

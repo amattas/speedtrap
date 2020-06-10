@@ -71,7 +71,7 @@ class Scribe:
         ----------
         speed : str
             This is the speed of the event provided in the SpeedRecord
-        recorded_time: time
+        recorded_time: datetime
             This is the time of the event provided in the SpeedRecord
         filename: str
             This is the name of the file provided in the SpeedRecord
@@ -100,13 +100,13 @@ class Scribe:
         ----------
         speed : str
             This is the speed of the event to store to local storage
-        recorded_time: time
+        recorded_time: datetime
             This is the time of the event to store to local st orage
         filename: str
             This is the name of the file to store to local storage
         """
         self.logger.debug("Entering _record_storage()")
-        record = [(speed, time.strftime('%Y-%m-%d %H:%M:%S', recorded_time), filename)]
+        record = [(speed, '{:%Y-%m-%d %H:%M:%S}'.format(recorded_time), filename)]
         csv_filename = self._config.database_path + self._config.database_filename
         csv_file = open(csv_filename,'a')
         csv_writer = csv.writer(csv_file, dialect='excel')

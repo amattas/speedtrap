@@ -12,7 +12,7 @@ class SpeedRecord:
 
         Parameters
         ----------
-        time : Time
+        time : datetime
             This is the time the record occurred at
         filename : str
             This is the filename for the video stored

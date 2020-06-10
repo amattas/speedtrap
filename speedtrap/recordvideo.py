@@ -1,7 +1,9 @@
 import logging
 import cv2
 import queue
+from datetime import datetime
 import time
+import uuid
 from speedrecord import SpeedRecord
 
 
@@ -73,8 +75,9 @@ class RecordVideo:
                 self.logger.debug("Mode now set to %s", mode)
             # Record on 1
             if mode == 1:
+                current_time = datetime.today()
                 if filename is None:
-                    filename = str(int(time.time())) + self._config.camera_file_extension
+                    filename = str(uuid.uuid1()) + self._config.camera_file_extension
                 self.logger.debug("Filename set to: %s", filename)
                 self.logger.debug("Creating video_writer")
                 video_writer = cv2.VideoWriter(self._config.storage_path + filename,
@@ -103,7 +106,7 @@ class RecordVideo:
                 self.logger.debug("Completing video writing")
                 video_writer.release()
                 self.logger.debug("Creating speed record instance")
-                speed_record = SpeedRecord(time.localtime(), filename, max_speed)
+                speed_record = SpeedRecord(current_time, filename, max_speed)
                 self.logger.debug("Sending speed record to record_child Pipe()")
                 record_child.send(speed_record)
                 # Reset variables for the next record.
@@ -136,7 +139,7 @@ class RecordVideo:
             Returns an image with the parameter text overlaid
         """
         self.logger.debug("Entering _overlay()")
-        overlay_text = '{0!s} mph     {1!s}'.format(speed, time.strftime('%Y-%m-%d %H:%M:%S', recorded_time))
+        overlay_text = '{:06.2f} mph     {:%Y-%m-%d %H:%M:%S}'.format(speed, recorded_time)
         self.logger.debug("Video overlay text %s", overlay_text)
         font_face = cv2.FONT_HERSHEY_SIMPLEX
         font_scale = .8
