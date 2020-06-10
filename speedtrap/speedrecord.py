@@ -5,25 +5,61 @@ class SpeedRecord:
     """
 
     def __init__(self, time, filename, speed):
+        """
+        This is the constructor used for class initialization
+
+        Parameters
+        ----------
+        time : Time
+            This is the time the record occurred at
+        filename : str
+            This is the filename for the video stored
+        speed : float
+            This is the speed recorded
+
+        Returns
+        ------
+        SpeedRecord:
+            Returns a SpeedRecord instance initialized with the provided Configuration.
+        -----
+        """
         self._time = time
         self._filename = filename
         self._speed = speed
 
     def get_time(self):
+        """
+        Returns the time stored in the SpeedRecord instance
+
+        Returns
+        ------
+        time:
+            The time stored in the SpeedRecord instance
+        -----
+        """
         return self._time
 
-    def set_time(self, time):
-        self._time = time
-
     def get_filename(self):
+        """
+        Returns the filename stored in the SpeedRecord instance
+
+        Returns
+        ------
+        str:
+            The filename stored in the SpeedRecord instance
+        -----
+        """
         return self._filename
 
-    def set_filename(self, filename):
-        self._filename = filename
-
     def get_speed(self):
-        return self._speed
+        """
+        Returns the speed stored in the SpeedRecord instance
 
-    def set_speed(self, speed):
-        self._speed = speed
+        Returns
+        ------
+        float:
+            The speed stored in the SpeedRecord instance
+        -----
+        """
+        return self._speed
 
