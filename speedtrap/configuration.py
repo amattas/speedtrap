@@ -3,10 +3,29 @@ import logging
 
 
 class Configuration:
+    """
+    This class is a helper class used to manage the configuration of the speedtrap. It reads an INI style configuration
+    file and loads the values into this class to be consumed during execution. All of the work happens during the
+    initialization of the class.
+    """
 
     def __init__(self, config_filename):
+        """
+        This is the constructor used for class initialization
+
+        Parameters
+        ----------
+        config_filename: str
+            This is the full path for the configuration file used to populate the Configuration object.
+
+        Returns
+        -------
+        Configuration:
+            Returns a Configuration instance initialized with the values specified in config_filename
+        -----
+        """
         self._config_parser = configparser.ConfigParser()
-        self._config_parser.read('config.ini')
+        self._config_parser.read(config_filename)
 
         # Load Default Configuration Section
         self.record_threshold = int(self._config_parser['DEFAULT']['RecordThreshold'])
