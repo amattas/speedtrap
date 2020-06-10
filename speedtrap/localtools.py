@@ -26,6 +26,7 @@ class LocalTools:
         self._config = config
         logging.basicConfig(level=self._config.logging_level)
         self.logger = logging.getLogger('SpeedTrap.LocalTools')
+        self.logger.debug("Creating LocalTools() instance")
 
     @staticmethod
     def clean_local(config):
@@ -41,10 +42,12 @@ class LocalTools:
         """
         logging.basicConfig(level=config.logging_level)
         logger = logging.getLogger('SpeedTrap.LocalTools')
-        logger.debug("Entering clean_local()")
+        logger.debug("Entering (static) clean_local()")
         for filename in os.listdir(config.storage_path):
             if filename.endswith(config.database_filename):
                 os.remove(config.database_path+filename)
+                logger.debug("Successfully removed %s", filename)
             if filename.endswith(config.camera_file_extension):
                 os.remove(config.database_path+filename)
+                logger.debug("Successfully removed %s", filename)
         logger.debug("Leaving clean_local()")
