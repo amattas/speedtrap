@@ -1,7 +1,6 @@
 import logging
 import multiprocessing
 import pyodbc
-from datetime import datetime
 
 
 class ODBCDatabase:
@@ -55,7 +54,8 @@ class ODBCDatabase:
             return
         elif self._config.enable_azure:
             self.logger.debug("Starting thread to record database record")
-            self._cloud_storage_thread = multiprocessing.Process(target=self._database_record, args=(speed, recorded_time, file_uri))
+            self._cloud_storage_thread = multiprocessing.Process(target=self._database_record,
+                                                                 args=(speed, recorded_time, file_uri))
             self._cloud_storage_thread.start()
         self.logger.debug("Leaving database_record()")
 
