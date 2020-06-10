@@ -31,7 +31,7 @@ class Configuration:
         # Load Default Configuration Section
         self.record_threshold = int(self._config_parser['DEFAULT']['RecordThreshold'])
         self.clear_local_on_start = self._config_parser.getboolean('DEFAULT','ClearLocalOnStart')
-        self.logging_path = int(self._config_parser['DEFAULT']['LogPath'])
+        self.logging_path = self._config_parser['DEFAULT']['LogPath']
         if self._config_parser['DEFAULT']['LogLevel'] == 'DEBUG':
             self.logging_level = logging.DEBUG
         elif self._config_parser['DEFAULT']['LogLevel'] == 'INFO':
