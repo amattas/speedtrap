@@ -22,7 +22,7 @@ class RecordVideo:
         self._current_filename = 'unknown' + self._config.camera_file_extension
         self._video_codec = cv2.VideoWriter_fourcc(*self._config.camera_fourcc_codec)
 
-    def record(self, record_mode_child, video_queue):
+    def record(self, record_child, video_queue):
         """
         Records video frames stored in a multiprocessing.Queue() to file.
 
@@ -33,7 +33,7 @@ class RecordVideo:
 
         Parameters
         ----------
-        record_mode_child : Pipe()
+        record_child : Pipe()
             This is one half of a bidirectional multiprocessing.Pipe(). It's used to control the behavior of the
             method. Possible values include: -1 which will cause the process to clean-up and exit gracefully, 0
             (the default) which will cause the record process to wait 10ms and then loop, and 1 which will cause the
@@ -45,13 +45,14 @@ class RecordVideo:
             is captured.
         """
         self.logger.debug("Entering record()")
+        # ToDo - Why are we dropping a ghost record at startup
         mode = 0
         filename = None
         max_speed = 0
         # Exit on -1
         while mode != -1:
-            if record_mode_child.poll():
-                mode = record_mode_child.recv()
+            if record_child.poll():
+                mode = record_child.recv()
             # Record on 1
             if mode == 1:
                 if filename is None:
@@ -84,11 +85,12 @@ class RecordVideo:
                         break
                 self.logger.debug("Completing video writing")
                 video_writer.release()
-                # ToDo: Add code to save to cloud
-                mode = 0
                 speed_record = SpeedRecord(time.localtime(), filename, max_speed)
-                record_mode_child.send(speed_record)
+                record_child.send(speed_record)
+                # Reset variables for the next record.
                 max_speed = 0
+                mode = 0
+                filename = None
             if mode == 0:
                 time.sleep(.01)
 

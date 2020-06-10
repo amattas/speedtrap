@@ -17,7 +17,7 @@ class CaptureVideo:
         self._config = config
         # self._current_filename = 'unknown' + self._config.camera_file_extension ToDo: Need File Name for File
 
-    def capture(self, capture_mode_child, capture_speed_child, video_queue):
+    def capture(self, capture_child, capture_speed_child, video_queue):
         """
         Captures video frames from a connected web cam.
 
@@ -27,7 +27,7 @@ class CaptureVideo:
 
         Parameters
         ----------
-        capture_mode_child : Pipe
+        capture_child : Pipe
             This is one half of a bidirectional multiprocessing.Pipe(). It's used to control the behavior of the
             method. Possible values include: -1 which will cause the process to clean-up and exit gracefully, 0
             (the default) which will cause the capture process to store video in a ring buffer until its maximum size is
@@ -50,8 +50,8 @@ class CaptureVideo:
         video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, self._config.camera_xresolution)
         video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self._config.camera_yresolution)
         while mode != -1:
-            if capture_mode_child.poll():
-                mode = capture_mode_child.recv()
+            if capture_child.poll():
+                mode = capture_child.recv()
             if capture_speed_child.poll():
                 speed = capture_speed_child.recv()
             ret, frame = video_capture.read()

@@ -6,6 +6,7 @@ from capturevideo import CaptureVideo
 from recordvideo import RecordVideo
 from configuration import Configuration
 from radar import Radar
+from datarecorder import DataRecorder
 from multiprocessing import Pipe, Process, Queue
 from speedrecord import SpeedRecord
 
@@ -26,19 +27,23 @@ def main():
     # radar_parent, radar_child = Pipe() - ToDo: separate radar process
     # log_parent, log_child = Pipe() - ToDo: separate logging process
     video_queue = Queue()  # Video Ring Buffer
-    capture_parent, capture_mode_child = Pipe()  # Signaling to Camera Process
-    capture_speed_parent, capture_speed_child = Pipe()   # Signaling to Camera Process
-    record_parent, record_mode_child = Pipe()  # Signaling to Record Process
 
-    capture = CaptureVideo(config)
-    record = RecordVideo(config)
-
-    capture_process = Process(target=capture.capture, args=(capture_mode_child, capture_speed_child,
-                                                            video_queue))
+    capture_video = CaptureVideo(config)
+    capture_parent, capture_child = Pipe()
+    capture_speed_parent, capture_speed_child = Pipe()
+    capture_process = Process(target=capture_video.capture, args=(capture_child, capture_speed_child, video_queue))
     capture_process.start()
 
-    record_process = Process(target=record.record, args=(record_mode_child, video_queue))
+    record_video = RecordVideo(config)
+    record_parent, record_child = Pipe()
+    record_process = Process(target=record_video.record, args=(record_child, video_queue))
     record_process.start()
+
+    data_recorder = DataRecorder(config)
+    data_parent, data_child = Pipe()
+    data_process = Process(target=data_recorder.capture, args=(data_child, ))
+    data_process.start()
+
 
     # Tracking if we are currently recording so we don't accidentally create a race condition
     recording = False
@@ -48,7 +53,7 @@ def main():
             if record_parent.poll():
                 record_result = record_parent.recv()
                 if type(record_result) is SpeedRecord:
-                    # ToDo We aren't recording anymore, so lets log
+                    data_parent.send(record_result)  # Log Data
                     # Change the behavior of the capture process back to its default.
                     recording = False
                     capture_parent.send(0)
