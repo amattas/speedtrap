@@ -76,17 +76,19 @@ class CloudStorage:
                 self.logger.debug("Creating BlobServiceClient")
                 storage_service = BlockBlobService(account_name=self._config.azure_storage_account,
                                                    account_key=self._config.azure_storage_key)
-                self.logger.debug("Writing File %s", filename)
+                self.logger.debug("Attempting to save file %s to Azure", filename)
                 # storage_container =  storage_service.acquire_container_lease(self._azure_storage_container)
                 self.logger.debug("Getting BlobClient %s", filename)
                 storage_service.create_blob_from_path(container_name=self._config.azure_storage_container,
                                                       blob_name=filename,
                                                       file_path=self._config.storage_path + filename)
+                self.logger.info("File %s successfully saved to Azure", filename)
                 if self._config.storage_delete_on_upload:
-                    self.logger.debug("Deleting file %s", filename)
+                    self.logger.debug("Deleting local file %s", filename)
                     os.remove(self._config.storage_path + filename)
+                    self.logger.info("File %s successfully deleted from local filesystem", filename)
                     break
             except azure.common.AzureException:
-                self.logger.info("Upload to Azure Storage failed attempt %s", retry_counter+1)
+                self.logger.warning("Upload to Azure Storage failed on attempt %s", retry_counter+1)
                 continue
         self.logger.debug("Leaving _store_azure_blob()")
