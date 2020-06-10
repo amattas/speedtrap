@@ -27,8 +27,8 @@ class CaptureVideo:
         """
         self._config = config
         logging.basicConfig(level=self._config.logging_level)
-        self.logger = logging.getLogger('SpeedTrap.Capture')
-        self.logger.debug("Creating CaptureVideo() instance")
+        self.logger = logging.getLogger('SpeedTrap.CaptureVideo')
+        self.logger.info("Creating CaptureVideo() instance")
         self._config = config
 
     def capture(self, capture_child, capture_speed_child, video_queue):
@@ -65,18 +65,20 @@ class CaptureVideo:
         video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self._config.camera_yresolution)
         while mode != -1:
             if capture_child.poll():
+                self.logger.debug("Message receive on capture_child Pipe()")
                 mode = capture_child.recv()
             if capture_speed_child.poll():
+                self.logger.debug("Message receive on capture_speed_child Pipe()")
                 speed = capture_speed_child.recv()
             ret, frame = video_capture.read()
             if ret:
                 self.logger.debug("Getting video frame and adding to queue")
                 video_queue.put((frame, speed, time.localtime()))
-                self.logger.debug("Video queue size roughly %s", video_queue.qsize())
+                self.logger.debug("Video queue size is now roughly %s", video_queue.qsize())
             # ToDo: Set buffer ring max size as a configuration value
             if mode == 0:
                 while video_queue.qsize() > 50:
-                    self.logger.debug("Draining ring buffer size roughly %s", video_queue.qsize())
+                    self.logger.debug("Draining ring buffer size is now roughly %s", video_queue.qsize())
                     video_queue.get(False)
         self.logger.debug("Leaving capture()")
         return
