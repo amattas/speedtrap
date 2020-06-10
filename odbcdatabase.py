@@ -5,7 +5,7 @@ import time
 
 
 class ODBCDatabase:
-f    # ToDo - Comment Class
+    # ToDo - Comment Class
     def __init__(self, config):
         self._config = config
         logging.basicConfig(level=self._config.logging_level)
