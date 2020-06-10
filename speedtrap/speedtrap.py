@@ -14,7 +14,7 @@ from speedrecord import SpeedRecord
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c","--config", dest="filename",
+    parser.add_argument("-c", "--config", dest="filename",
                         help="load configuration file", required=True)
     config_filename = parser.parse_args().filename
     config = Configuration(config_filename)
@@ -53,7 +53,6 @@ def main():
     data_process = Process(target=data_recorder.capture, args=(data_child, ))
     data_process.start()
     logger.info("Scribe Process started")
-
 
     # Tracking if we are currently recording so we don't accidentally create a race condition
     recording = False
