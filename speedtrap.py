@@ -24,8 +24,6 @@ def main():
     radar = Radar(config)
 
     # Create pipes for inter-process communication
-    # radar_parent, radar_child = Pipe() - ToDo: separate radar process
-    # log_parent, log_child = Pipe() - ToDo: separate logging process
     video_queue = Queue()  # Video Ring Buffer
 
     capture_video = CaptureVideo(config)
