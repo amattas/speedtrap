@@ -9,7 +9,6 @@ class Configuration:
         self._config_parser.read('config.ini')
 
         # Load Default Configuration Section
-        self.log_threshold = int(self._config_parser['DEFAULT']['LogThreshold'])
         self.record_threshold = int(self._config_parser['DEFAULT']['RecordThreshold'])
         self.clear_local_on_start = self._config_parser.getboolean('DEFAULT','ClearLocalOnStart')
         self.enable_azure = self._config_parser.getboolean('DEFAULT','EnableAzure')
@@ -28,7 +27,7 @@ class Configuration:
         if self.enable_odbc:
             self.database_connection_string = self._config_parser['DATABASE']['DatabaseConnectionString']
 
-
+        # ToDo: Make configurations true or false
         # Load Storage Configuration Section
         self.storage_path = self._config_parser['STORAGE']['StoragePath']
         if self.enable_azure:
@@ -48,7 +47,7 @@ class Configuration:
         self.radar_speed_output_units = self._config_parser['RADAR']['SpeedOutputUnits']
         self.radar_data_precision = self._config_parser['RADAR']['DataPrecision']
         self.radar_sampling_rate = self._config_parser['RADAR']['SamplingRate']
-        self.radar_reported_minimum_speed = "R>{!s}\r".format(self.log_threshold)
+        self.radar_reported_minimum_speed = "R>{!s}\r".format(self.record_threshold)
         self.radar_speed_reported_maximum = "R<0\r"
         self.radar_direction_control = self._config_parser['RADAR']['DirectionControl']
         self.radar_speed_report = self._config_parser['RADAR']['SpeedReport']

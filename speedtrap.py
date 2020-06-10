@@ -64,12 +64,10 @@ def main():
             logger.debug("Current speed is %s", speed)
             capture_speed_parent.send(speed)
             if speed > config.record_threshold and recording is False:
-                # ToDo: Eliminate Log Threshold Configuration
                 recording = True
                 # Change the behavior of the video capture and recording process to record mode
                 capture_parent.send(1)
                 record_parent.send(1)
-            # log_speed.log_speed(current_speed)
         except KeyboardInterrupt:
             execute_loop = False
     logger.info("SpeedTrap Terminating")
