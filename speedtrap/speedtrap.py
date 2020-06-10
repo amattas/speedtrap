@@ -16,7 +16,8 @@ def main():
     logging.basicConfig(level=config.logging_level)
     logger = logging.getLogger('SpeedTrap')
     logger.info("SpeedTrap Starting")
-    logger.info("Loading configuration file")
+    logger.info("Configuration file successfully loaded")
+    logger.debug("%s", config)
     if config.clear_local_on_start:
         LocalTools.clean_local(config)
     # log_speed = LogSpeed(config)
@@ -26,31 +27,41 @@ def main():
     # Create pipes for inter-process communication
     video_queue = Queue()  # Video Ring Buffer
 
+    logger.debug("Starting video capture Process")
     capture_video = CaptureVideo(config)
     capture_parent, capture_child = Pipe()
     capture_speed_parent, capture_speed_child = Pipe()
     capture_process = Process(target=capture_video.capture, args=(capture_child, capture_speed_child, video_queue))
     capture_process.start()
+    logger.info("Video capture Process started")
 
+    logger.debug("Starting video record Process")
     record_video = RecordVideo(config)
     record_parent, record_child = Pipe()
     record_process = Process(target=record_video.record, args=(record_child, video_queue))
     record_process.start()
+    logger.info("Video record Process started")
 
+    logger.debug("Starting scribe Process")
     data_recorder = Scribe(config)
     data_parent, data_child = Pipe()
     data_process = Process(target=data_recorder.capture, args=(data_child, ))
     data_process.start()
+    logger.info("Scribe Process started")
 
 
     # Tracking if we are currently recording so we don't accidentally create a race condition
     recording = False
     speed = 0
+    logger.debug("Starting radar polling loop")
     while execute_loop:
         try:
             if record_parent.poll():
                 record_result = record_parent.recv()
+                logger.debug("Message received on record_parent Pipe()")
                 if type(record_result) is SpeedRecord:
+                    logger.debug("Received message is a SpeedRecord")
+                    logger.debug("Sending message on data_parent Pipe()")
                     data_parent.send(record_result)  # Log Data
                     # Change the behavior of the capture process back to its default.
                     recording = False
@@ -65,11 +76,14 @@ def main():
             else:
                 speed = 0
             logger.debug("Current speed is %s", speed)
+            logger.debug("Sending message of %s to capture_speed_parent Pipe()", speed)
             capture_speed_parent.send(speed)
             if speed > config.record_threshold and recording is False:
                 recording = True
                 # Change the behavior of the video capture and recording process to record mode
+                logger.debug("Sending message of 1 to capture_parent Pipe()")
                 capture_parent.send(1)
+                logger.debug("Sending message of 1 to record_parent Pipe()")
                 record_parent.send(1)
         except KeyboardInterrupt:
             execute_loop = False
